@@ -25,7 +25,9 @@ First I will begin the analysis by exploring basic statistics about the data set
 ### Data Preparation and Munging
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 # import data and packages
-az <- read.csv('P-AZ.csv', row.names=NULL)
+az <- read.csv('P-AZ.csv',sep = ',', row.names= NULL,)
+
+colnames(az) <- c(colnames(az)[-1],"x")
 az$x <- NULL
 
 library(ggplot2)
@@ -50,8 +52,6 @@ require(githubinstall)
 
 x <- c("ggmap", "rgdal", "rgeos", "maptools", "dplyr", "tidyr", "tmap")
 lapply(x, library, character.only = TRUE) # load the required packages
-
-
 
 
 
@@ -145,7 +145,7 @@ f_index <- c("Clinton, Hillary Rodham", "Fiorina, Carly", "Stein, Jill" )
 
 head(az)
 #simple cand_gender
-az$cand_gender <-NA
+az$cand_gender <-'a'
 attach(az)
 az$cand_gender[cand_nm %in% m_index] <- "Male"
 az$cand_gender[cand_nm %in% f_index] <- "Female"
@@ -155,6 +155,9 @@ az$cand_gender <- factor(az$cand_gender)
 
 az$cand_gender
 
+az$cand_nm %in% m_index
+
+az
 
 ```
 Now that I added candidates' genders, I'll add the contributors' genders, by using the gender package.
