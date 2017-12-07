@@ -121,7 +121,7 @@ I would also like to integrate population data by zip-code from the 2010 ZCTA ce
 
 
 
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 
 
 # Add Gender col to candidates
@@ -603,8 +603,7 @@ az$week <-format(az$proper_date, format = "%W")
 az$month <-format(az$proper_date, format = "%m")
 az$year <-format(az$proper_date, format = "%y")
 
-by_wk <- az %>% group_by(year = as.numeric(year), week= as.numeric(week), party)
-%>% summarise(sum = sum(contb_receipt_amt), 
+by_wk <- az %>% group_by(year = as.numeric(year), week= as.numeric(week), party) %>% summarise(sum = sum(contb_receipt_amt), 
               avg = mean(contb_receipt_amt),
               n=n())
 
