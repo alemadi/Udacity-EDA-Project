@@ -137,7 +137,7 @@ m_index <- c('Bush, Jeb', "Carson, Benjamin S."
             "Walker, Scott", "Sanders, Bernard",
             "Lessig, Lawrence", "O'Malley, Martin Joseph",
             "Webb, James Henry Jr.", "Johnson, Gary",
-            "McMullin, Evan"
+            "McMullin, Evan", "Christie, Christopher J.", 'Santorum, Richard J.'	
             )
 
 f_index <- c("Clinton, Hillary Rodham", "Fiorina, Carly", "Stein, Jill" )
@@ -145,7 +145,7 @@ f_index <- c("Clinton, Hillary Rodham", "Fiorina, Carly", "Stein, Jill" )
 
 
 #simple cand_gender
-az$cand_gender <-'a'
+az$cand_gender <- NA
 attach(az)
 az$cand_gender[cand_nm %in% m_index] <- "Male"
 az$cand_gender[cand_nm %in% f_index] <- "Female"
@@ -215,21 +215,62 @@ city_tab <- top10(az$contbr_city)
 ggplot(city_tab, aes(x, Freq))+
   geom_bar(stat='identity')
 
+# top cand counts
+top_cand <-top10(az$cand_nm)
+
+ggplot(top_cand, aes(x, Freq))+
+  geom_bar(stat='identity')+
+  theme(axis.text.x=element_text(angle=90,hjust=1))
+
 # top contribs counts
-top_parties <-top10(az$party)
-
-ggplot(top_parties, aes(x, Freq))+
-  geom_bar(stat='identity')
+top_contribs <- top10(az$contbr_nm)
 
 
+ggplot(top_contribs, aes(x, Freq))+
+  geom_bar(stat='identity')+
+  theme(axis.text.x=element_text(angle=90,hjust=1))
 
+# Top total contribututers by 
+wealth <- az %>% group_by(contbr_nm) %>%
+  summarise(Total = sum(contb_receipt_amt))
 
-city_tab
+wealthy_contribs <- head(sort(wealth$Total, decreasing = T), 1000)
 
+ggplot(as.data.frame.numeric(wealthy_contribs), aes(wealthy_contribs))+
+  geom_histogram()
+
+weatlhty_df <- as.data.frame.table(table(wealthy_contribs))
+
+weatlhty_df[weatlhty_df$Freq >10 ,]
 
 ```
 
+The above dataframe has made me curius as why these particular total amounts were contributed. After some reasearch I have found some interesting findings, regarding the most common total amount (
+$2,700) according to the Federal Election Commission's website (https://transition.fec.gov/pages/brochures/citizens.shtml), it states that "An individual may give a maximum of:
+
+$2,700 per election to a federal candidate or the candidate's campaign committee."
+
+Regarding the 3rd most common amount (5,400) the website states "A husband and wife each have separate contribution limits, even if only one spouse has an income. For example, a couple may contribute a $5,400 check to a candidate's primary campaign as long as both sign the check." 
+
+The point that I am trying to make here is we can use this dataframe to infer what kind of contributors we have in the dataset, such as couples, singles, fundraisers, coorporate and etc..
+
+
+
 I would like to know how the data is distributed. 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+# contrib gender bar
+ggplot(az, aes(contrib_gender))+
+  geom_bar()
+
+# candidate gender bar
+
+ggplot(az, aes(cand_gender))+
+  geom_bar()
+
+
+
+```
 
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
@@ -240,9 +281,14 @@ ggplot(az, aes(contb_receipt_amt))+
   geom_histogram(binwidth = 15)+
   coord_cartesian(xlim=c(0:500))
 
+# Negative money disterbution
+ggplot(az[az$contb_receipt_amt < -1,], aes(contb_receipt_amt))+
+  geom_histogram()+
+  ggtitle('Negative money distribution')
+
+
 
 #money disterbution normalized
-
 
 ggplot(az, aes(contb_receipt_amt))+
   geom_histogram()+
@@ -263,20 +309,9 @@ ggplot(az, aes(contb_receipt_amt))+
 ```
 
 
-Date distribution 
-```{r echo=FALSE, message=FALSE, warning=FALSE}
-#Date disterbution
-ggplot(az, aes(proper_date))+
-  geom_histogram(binwidth = 20)
 
 
-
-
-
-
-```
-
-It appears that we have negative numbers, that goes all to -5400. I believe that it represents refunds, since the most receipt comment is receipt.
+It appears that we have negative numbers, that goes all to -5400. I believe that it represents refunds, since the most receipt comment is refund.
 
 I want to find out the amount stats without the refunds.
 
@@ -304,6 +339,21 @@ ggplot(top_deno, aes(x, Freq))+
 ```
 
 I wonder why the odd numbers such as 19, 27 or even 38.  
+
+
+
+Date distribution:
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#Date disterbution
+ggplot(az, aes(proper_date))+
+  geom_histogram(binwidth = 20)
+
+
+
+
+
+
+```
 
 
 Below we will see the number of contributions for each candidate and how they break out: 
