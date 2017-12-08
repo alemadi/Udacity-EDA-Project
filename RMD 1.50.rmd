@@ -93,7 +93,7 @@ rindex <- c('Bush, Jeb', "Carson, Benjamin S."
             "Jindal, Bobby", "Kasich, John R.",
             "Paul, Rand", "Perry, James R. (Rick)",
             "Rubio, Marco", "Trump, Donald J.",
-            "Walker, Scott" )
+            "Walker, Scott",  "Christie, Christopher J.", 'Santorum, Richard J.')
 attach(az)
 az$party[cand_nm %in% index] <- "independent"
 az$party[cand_nm %in% dindex] <- "democrat"
@@ -271,7 +271,25 @@ ggplot(az, aes(cand_gender))+
 
 
 ```
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+# party dist.
+party_count <- ggplot(az[az$party != 'independent',], aes(party))+
+  geom_bar()
+party_count
 
+#party total
+
+party_total <- az %>% group_by(party) %>%
+  summarise(total = sum(contb_receipt_amt))
+
+party_sum <- ggplot(party_total[party_total$party != 'independent',], aes(party, total))+
+    geom_bar(stat='identity')
+
+grid.arrange(party_count, party_sum, ncol=2)
+
+```
+
+The plot on the left shows the count of contributions for each party, and the plot on the right shows the sum of contributions to each party. 
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 
@@ -331,8 +349,11 @@ tab[tab>1000]
 top_deno<- top10(az$contb_receipt_amt)
 
 ggplot(top_deno, aes(x, Freq))+
-  geom_bar(stat='identity')
+  geom_bar(stat='identity')+
+  xlab('USD Denominations')
 
+
+# Idea: see the average of each candidate contriubution, think: Bernie's $27 campain
 
 
 
@@ -381,14 +402,16 @@ tot_rec
 
 ggplot(data= tot_rec,
        aes(reorder(Group.1, -x), x)) +
-  geom_bar(stat="identity")
+  geom_bar(stat="identity")+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
   
 
 # Normalized
 ggplot(data= tot_rec,
        aes(reorder(Group.1, -x), x)) +
   geom_bar(stat="identity")+
-  scale_y_log10()
+  scale_y_log10()+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 
 
