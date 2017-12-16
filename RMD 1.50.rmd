@@ -406,7 +406,9 @@ ggplot(avg_amt_cand[avg_amt_cand$n > 400,],
 Interestingly, the highest median contributions were given to republican candidates. Meanwhile, both Clinton and Sanders had the least median of contribution amounts. 
 
 
-Below I would like to discove the date distribution of contributions.
+Below I would like to first discover the date distribution of contributions.
+
+The second graph demonstrates the volume of disterbutions per candidate along the dates. From the graph we can see when did each campaign gain or lose it's momentum, also it is apparent when the candidates dropped out of the race.
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 #Date disterbution
 ggplot(az[az$proper_date > '2015-04-01',], aes(proper_date))+
@@ -417,6 +419,7 @@ ggplot(az[az$proper_date > '2015-04-01',], aes(proper_date, cand_nm))+
 
 
 ```
+
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 per_date <- az[az$proper_date > '2015-04-01',] %>% group_by(proper_date, party)%>%
@@ -444,6 +447,7 @@ date_num_cumulative <-ggplot(per_date[per_date$party == 'republican',],
 grid.arrange(date_amt_cumulative, date_num_cumulative)
 
 ```
+The above plot shows the cumulative of amount contributed and number of contributions along the dates, breaked down by party. Republicans have contributed slightly more in total, but the number of democratic contributions significantly outweighs the number of republican contributions. 
 
 
 Below we will see the number of contributions for each candidate and how they break out: 
