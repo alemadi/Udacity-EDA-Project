@@ -60,6 +60,8 @@ az$contbr_zip <- factor(az$contbr_zip)
 #convert from char to date class
 az$proper_date <- as.Date(az$contb_receipt_dt, format = '%d-%B-%y')
 
+az
+
 ```
 
 
@@ -100,8 +102,11 @@ az$party[cand_nm %in% dindex] <- "democrat"
 az$party[cand_nm %in% rindex] <- 'republican'
 detach(az)
 
+
+
 # Convert party to factor
 az$party <- factor(az$party)
+
 ```
 
 I also would like to add other information such as latitudes and longitudes for map analysis
@@ -117,11 +122,10 @@ az <- merge(az, az_loc, by.x = 'clean_zip', by.y = 'zip')
 
 ```
 
-I would also like to integrate population data by zip-code from the 2010 ZCTA census.
 
 
-
-```{r echo=FALSE, message=FALSE, warning=FALSE}
+I will add candidate gender column below
+```{r}
 
 
 # Add Gender col to candidates
@@ -152,6 +156,12 @@ az$cand_gender[cand_nm %in% f_index] <- "Female"
 detach(az)
 # convert cand_gender to factor
 az$cand_gender <- factor(az$cand_gender)
+
+
+
+```
+
+```{r}
 
 ```
 Now that I added candidates' genders, I'll add the contributors' genders, by using the gender package.
@@ -193,6 +203,12 @@ az$contrib_gender <- factor(az$contrib_gender)
 
 
 ### Exploratory Data Analysis
+
+Below I will explore the top occurrences (counts) of the following:
+
+1- Cities
+2- Candidates
+3- Contributors
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 # Create a function that gets  top ten counts
 top10 <- function(x){
@@ -206,14 +222,14 @@ top10 <- function(x){
 }
   
   
-  
 
 # count city occurences in data set
 city_tab <- top10(az$contbr_city)
 
 
 ggplot(city_tab, aes(x, Freq))+
-  geom_bar(stat='identity')
+  geom_bar(stat='identity') +
+  theme(axis.text.x=element_text(angle=90,hjust=1))
 
 # top cand counts
 top_cand <-top10(az$cand_nm)
@@ -230,6 +246,12 @@ ggplot(top_contribs, aes(x, Freq))+
   geom_bar(stat='identity')+
   theme(axis.text.x=element_text(angle=90,hjust=1))
 
+
+```
+
+Now I would like to explore the distribution by sum of money contributed.
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
 # Top total contribututers by 
 wealth <- az %>% group_by(contbr_nm) %>%
   summarise(Total = sum(contb_receipt_amt))
@@ -245,18 +267,18 @@ weatlhty_df[weatlhty_df$Freq >10 ,]
 
 ```
 
-The above dataframe has made me curius as why these particular total amounts were contributed. After some reasearch I have found some interesting findings, regarding the most common total amount (
+The above dataframe has made me curious as why these particular total amounts were contributed. After some research I have found some interesting findings, regarding the most common total amount (
 $2,700) according to the Federal Election Commission's website (https://transition.fec.gov/pages/brochures/citizens.shtml), it states that "An individual may give a maximum of:
 
 $2,700 per election to a federal candidate or the candidate's campaign committee."
 
 Regarding the 3rd most common amount (5,400) the website states "A husband and wife each have separate contribution limits, even if only one spouse has an income. For example, a couple may contribute a $5,400 check to a candidate's primary campaign as long as both sign the check." 
 
-The point that I am trying to make here is we can use this dataframe to infer what kind of contributors we have in the dataset, such as couples, singles, fundraisers, coorporate and etc..
+The point that I am trying to make here is we can use this dataframe to infer what kind of contributors we have in the dataset, such as couples, singles, fundraisers, corporate and etc..
 
 
 
-I would like to know how the data is distributed. 
+I would like to know how the data is distributed in terms of candidate and contributor gender count in the dataset.
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 # contrib gender bar
@@ -264,7 +286,6 @@ ggplot(az, aes(contrib_gender))+
   geom_bar()
 
 # candidate gender bar
-
 ggplot(az, aes(cand_gender))+
   geom_bar()
 
@@ -352,27 +373,75 @@ ggplot(top_deno, aes(x, Freq))+
   geom_bar(stat='identity')+
   xlab('USD Denominations')
 
-
-# Idea: see the average of each candidate contriubution, think: Bernie's $27 campain
-
-
-
 ```
 
 I wonder why the odd numbers such as 19, 27 or even 38.  
 
 
 
-Date distribution:
+This video from the Sanders campaign intrigued me (https://www.youtube.com/watch?v=3nJhuVBXlXk), it claims that the average contribution for the Sanders campaign was $27. Meaning that most Bernie supporters are low income workers.
+
+I would like to explore what is the median contribution received for each candidate. To be fair, I have excluded candidates that had less than 400 contributions from the dataset. 
+
+
+```{r}
+# Idea: see the average of each candidate contriubution, think: Bernie's $27 campain
+avg_amt_cand <- az[az$contb_receipt_amt > 0, ] %>% group_by(cand_nm) %>%
+  summarise(avg = mean(contb_receipt_amt),
+            median = median(contb_receipt_amt),
+            n= n())
+
+
+avg_amt_cand
+
+ggplot(avg_amt_cand[avg_amt_cand$n > 400,],
+       aes(cand_nm, median))+
+  geom_bar(stat = 'identity')+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+
+
+```
+
+Interestingly, the highest median contributions were given to republican candidates. Meanwhile, both Clinton and Sanders had the least median of contribution amounts. 
+
+
+Below I would like to discove the date distribution of contributions.
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 #Date disterbution
-ggplot(az, aes(proper_date))+
+ggplot(az[az$proper_date > '2015-04-01',], aes(proper_date))+
   geom_histogram(binwidth = 20)
 
+ggplot(az[az$proper_date > '2015-04-01',], aes(proper_date, cand_nm))+
+  geom_count()
+
+
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+per_date <- az[az$proper_date > '2015-04-01',] %>% group_by(proper_date, party)%>%
+  summarize(total = sum(contb_receipt_amt),
+  n = n())
+
+
+date_amt_cumulative <- ggplot(per_date[per_date$party == 'republican',],
+                   aes(x=proper_date, y=cumsum(total))) + geom_line(color= 'red', linetype="dashed") +
+  geom_line(data = per_date[per_date$party == 'democrat',]
+            , aes(x=proper_date, y=cumsum(total)),color='blue', linetype="dashed")
+
+
+date_amt_cumulative
+
+
+date_num_cumulative <-ggplot(per_date[per_date$party == 'republican',],
+                   aes(x=proper_date, y=cumsum(n))) + geom_line(color= 'red', linetype="dashed") +
+  geom_line(data = per_date[per_date$party == 'democrat',]
+            , aes(x=proper_date, y=cumsum(n)),color='blue', linetype="dashed")
 
 
 
 
+grid.arrange(date_amt_cumulative, date_num_cumulative)
 
 ```
 
@@ -399,6 +468,7 @@ tot_rec <- arrange(tot_rec, desc(x))
 tot_rec
 
 # Top in money recieved histogram
+
 
 ggplot(data= tot_rec,
        aes(reorder(Group.1, -x), x)) +

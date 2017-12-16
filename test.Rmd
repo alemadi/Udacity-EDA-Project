@@ -77,7 +77,7 @@ The structure of the data is as the following The file has 19 variables, and the
 
 I wish if there was a party and a gender column, I will try to it below. 
 
-```{r }
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 
 
 # Add party col
