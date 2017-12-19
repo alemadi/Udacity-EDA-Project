@@ -327,7 +327,7 @@ Job = [Shortest_contbr_occupation]
       </GuiSettings>
       <Properties>
         <Configuration>
-          <File FileFormat="25" MaxRecords="">C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\checkpoint 1.21.xlsx|||Sheet1</File>
+          <File FileFormat="25" MaxRecords="">C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\checkpoint 1.23.xlsx|||Sheet1</File>
           <Passwords />
           <FormatSpecificOptions>
             <OutputOption>Create</OutputOption>
@@ -336,7 +336,7 @@ Job = [Shortest_contbr_occupation]
         </Configuration>
         <Annotation DisplayMode="0">
           <Name />
-          <DefaultAnnotationText>checkpoint 1.21.xlsx
+          <DefaultAnnotationText>checkpoint 1.23.xlsx
 Table=Sheet1</DefaultAnnotationText>
           <Left value="False" />
         </Annotation>
@@ -355,7 +355,7 @@ Table=Sheet1</DefaultAnnotationText>
           <Value name="Number">False</Value>
           <Value name="NNumber">1000</Value>
           <Value name="Percent">True</Value>
-          <Value name="NPercent">5</Value>
+          <Value name="NPercent">40</Value>
           <Value name="Deterministic">False</Value>
           <Value name="Seed">458676342</Value>
         </Configuration>

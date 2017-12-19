@@ -3,12 +3,12 @@
   <Nodes>
     <Node ToolID="1">
       <GuiSettings Plugin="AlteryxBasePluginsGui.DbFileInput.DbFileInput">
-        <Position x="18" y="354" />
+        <Position x="42" y="354" />
       </GuiSettings>
       <Properties>
         <Configuration>
           <Passwords />
-          <File OutputFileName="" RecordLimit="" SearchSubDirs="False" FileFormat="25">C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\checkpoint 1.2.xlsx</File>
+          <File OutputFileName="" RecordLimit="" SearchSubDirs="False" FileFormat="25">C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\checkpoint 1.23.xlsx</File>
           <FormatSpecificOptions>
             <FirstRowData>False</FirstRowData>
             <ImportLine>1</ImportLine>
@@ -16,7 +16,7 @@
         </Configuration>
         <Annotation DisplayMode="0">
           <Name />
-          <DefaultAnnotationText>checkpoint 1.2.xlsx</DefaultAnnotationText>
+          <DefaultAnnotationText>checkpoint 1.23.xlsx</DefaultAnnotationText>
           <Left value="False" />
         </Annotation>
         <Dependencies>
@@ -24,13 +24,13 @@
         </Dependencies>
         <MetaInfo connection="Output">
           <RecordInfo>
-            <Field name="RecordID" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\checkpoint 1.2.xlsx" type="Double" />
-            <Field name="RecordID2" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\checkpoint 1.2.xlsx" type="Double" />
-            <Field name="MatchScore" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\checkpoint 1.2.xlsx" type="Double" />
-            <Field name="MatchScore_Job" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\checkpoint 1.2.xlsx" type="Double" />
-            <Field name="MatchKey" size="255" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\checkpoint 1.2.xlsx" type="V_String" />
-            <Field name="Right_MatchKey" size="255" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\checkpoint 1.2.xlsx" type="V_String" />
-            <Field name="First_contbr_occupation" size="255" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\checkpoint 1.2.xlsx" type="V_String" />
+            <Field name="RecordID" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\checkpoint 1.23.xlsx" type="Double" />
+            <Field name="RecordID2" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\checkpoint 1.23.xlsx" type="Double" />
+            <Field name="MatchScore" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\checkpoint 1.23.xlsx" type="Double" />
+            <Field name="MatchScore_Job" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\checkpoint 1.23.xlsx" type="Double" />
+            <Field name="MatchKey" size="255" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\checkpoint 1.23.xlsx" type="V_String" />
+            <Field name="Right_MatchKey" size="255" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\checkpoint 1.23.xlsx" type="V_String" />
+            <Field name="Shortest_contbr_occupation" size="255" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\checkpoint 1.23.xlsx" type="V_String" />
           </RecordInfo>
         </MetaInfo>
       </Properties>
@@ -143,7 +143,7 @@
       </GuiSettings>
       <Properties>
         <Configuration>
-          <TempFile>C:\Users\alema\AppData\Local\Temp\Engine_17420_5735932eea934e0bbbea40653372cb87_\Engine_10876_b085840e48e149aeaa29ea5f0e727143_.yxdb</TempFile>
+          <TempFile>C:\Users\alema\AppData\Local\Temp\Engine_17064_decf95966d814305bfcf7f6934b2d3c8_\Engine_10876_f99e6bd784a54b7c8a1fb9c753c290af_.yxdb</TempFile>
           <TempFileDataProfiling />
           <Layout>
             <ViewMode>Single</ViewMode>
@@ -171,7 +171,7 @@
       </GuiSettings>
       <Properties>
         <Configuration>
-          <TempFile>C:\Users\alema\AppData\Local\Temp\Engine_17420_5735932eea934e0bbbea40653372cb87_\Engine_10876_24a62c2064fa4d088449f35f25737624_.yxdb</TempFile>
+          <TempFile>C:\Users\alema\AppData\Local\Temp\Engine_17064_decf95966d814305bfcf7f6934b2d3c8_\Engine_10876_fdba6d9eaa41470a8e0673ee8f26955e_.yxdb</TempFile>
           <TempFileDataProfiling />
           <Layout>
             <ViewMode>Single</ViewMode>
@@ -199,7 +199,7 @@
       </GuiSettings>
       <Properties>
         <Configuration>
-          <TempFile>C:\Users\alema\AppData\Local\Temp\Engine_17420_5735932eea934e0bbbea40653372cb87_\Engine_10876_115872f8731d46e0bb0828c7f88e12bb_.yxdb</TempFile>
+          <TempFile>C:\Users\alema\AppData\Local\Temp\Engine_17064_decf95966d814305bfcf7f6934b2d3c8_\Engine_10876_4eebd336fd374a029b42ef09710fa720_.yxdb</TempFile>
           <TempFileDataProfiling />
           <Layout>
             <ViewMode>Single</ViewMode>
@@ -230,11 +230,21 @@
           <OrderChanged value="False" />
           <SelectFields>
             <SelectField field="RecordID" selected="True" />
+            <SelectField field="cand_nm" selected="True" />
+            <SelectField field="contbr_nm" selected="True" />
+            <SelectField field="contbr_city" selected="True" />
+            <SelectField field="contbr_zip" selected="True" />
+            <SelectField field="contbr_employer" selected="True" />
             <SelectField field="contbr_occupation" selected="True" />
+            <SelectField field="contb_receipt_amt" selected="True" />
+            <SelectField field="contb_receipt_dt" selected="True" />
+            <SelectField field="file_num" selected="True" />
+            <SelectField field="tran_id" selected="True" />
+            <SelectField field="election_tp" selected="True" />
             <SelectField field="Job" selected="True" />
             <SelectField field="MatchScore" selected="True" />
             <SelectField field="MatchKey" selected="True" />
-            <SelectField field="First_contbr_occupation" selected="True" />
+            <SelectField field="Shortest_contbr_occupation" selected="True" />
             <SelectField field="*Unknown" selected="False" />
           </SelectFields>
         </Configuration>
@@ -248,11 +258,11 @@
     </Node>
     <Node ToolID="12">
       <GuiSettings Plugin="AlteryxBasePluginsGui.BrowseV2.BrowseV2">
-        <Position x="762" y="378" />
+        <Position x="762" y="390" />
       </GuiSettings>
       <Properties>
         <Configuration>
-          <TempFile>C:\Users\alema\AppData\Local\Temp\Engine_17420_5735932eea934e0bbbea40653372cb87_\Engine_10876_6ce10553f66b464eacc372db5d3ac12a_.yxdb</TempFile>
+          <TempFile>C:\Users\alema\AppData\Local\Temp\Engine_17064_decf95966d814305bfcf7f6934b2d3c8_\Engine_10876_493e25b40c564f048cfb9ce6e58565ac_.yxdb</TempFile>
           <TempFileDataProfiling />
           <Layout>
             <ViewMode>Single</ViewMode>
@@ -298,7 +308,7 @@
       </GuiSettings>
       <Properties>
         <Configuration>
-          <TempFile>C:\Users\alema\AppData\Local\Temp\Engine_17420_5735932eea934e0bbbea40653372cb87_\Engine_10876_0b47d6d0f0dc4d3bb61ee38d7119d58d_.yxdb</TempFile>
+          <TempFile>C:\Users\alema\AppData\Local\Temp\Engine_17064_decf95966d814305bfcf7f6934b2d3c8_\Engine_10876_cc4f961534934b908e8ae872d33c97d3_.yxdb</TempFile>
           <TempFileDataProfiling />
           <Layout>
             <ViewMode>Single</ViewMode>
@@ -320,31 +330,17 @@
       </Properties>
       <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxBrowseV2" />
     </Node>
-    <Node ToolID="19">
-      <GuiSettings Plugin="AlteryxBasePluginsGui.Sort.Sort">
-        <Position x="138" y="390" />
-      </GuiSettings>
-      <Properties>
-        <Configuration>
-          <SortInfo locale="0">
-            <Field field="RecordID2" order="Ascending" />
-          </SortInfo>
-        </Configuration>
-        <Annotation DisplayMode="0">
-          <Name />
-          <DefaultAnnotationText>RecordID2 - Ascending</DefaultAnnotationText>
-          <Left value="False" />
-        </Annotation>
-      </Properties>
-      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxSort" />
-    </Node>
     <Node ToolID="20">
       <GuiSettings Plugin="AlteryxSpatialPluginsGui.Summarize.Summarize">
         <Position x="762" y="318" />
       </GuiSettings>
       <Properties>
         <Configuration>
-          <SummarizeFields />
+          <SummarizeFields>
+            <SummarizeField field="Job" action="CountDistinct" rename="CountDistinct_Job" />
+            <SummarizeField field="contbr_occupation" action="CountDistinct" rename="CountDistinct_contbr_occupation" />
+            <SummarizeField field="RecordID" action="CountDistinctNonNull" rename="CountDistinctNonNull_RecordID" />
+          </SummarizeFields>
         </Configuration>
         <Annotation DisplayMode="0">
           <Name />
@@ -356,7 +352,7 @@
     </Node>
     <Node ToolID="5">
       <GuiSettings Plugin="AlteryxBasePluginsGui.Formula.Formula">
-        <Position x="150" y="270" />
+        <Position x="150" y="246" />
       </GuiSettings>
       <Properties>
         <Configuration>
@@ -395,11 +391,84 @@ Job = [contbr_occupation]
     </Node>
     <Node ToolID="23">
       <GuiSettings Plugin="AlteryxGuiToolkit.TextBox.TextBox">
-        <Position x="474" y="138" width="100" height="40" />
+        <Position x="162" y="138" width="156" height="48" />
       </GuiSettings>
       <Properties>
         <Configuration>
-          <Text><![CDATA[The number of job categories ]]></Text>
+          <Text>The number of job categories  at the start (4955)</Text>
+          <Font name="Segoe UI" size="8.25" style="0" />
+          <TextColor name="Black" />
+          <FillColor name="White" />
+          <Shape shape="0" />
+          <Justification Justification="4" />
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText />
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+    </Node>
+    <Node ToolID="24">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.Sort.Sort">
+        <Position x="750" y="258" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <SortInfo locale="0">
+            <Field field="MatchScore" order="Ascending" />
+          </SortInfo>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>MatchScore - Ascending</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxSort" />
+    </Node>
+    <Node ToolID="25">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.AlteryxSelect.AlteryxSelect">
+        <Position x="918" y="414" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <OrderChanged value="False" />
+          <SelectFields>
+            <SelectField field="RecordID" selected="True" />
+            <SelectField field="cand_nm" selected="True" />
+            <SelectField field="contbr_nm" selected="True" />
+            <SelectField field="contbr_city" selected="True" />
+            <SelectField field="contbr_zip" selected="True" />
+            <SelectField field="contbr_employer" selected="True" />
+            <SelectField field="contbr_occupation" selected="True" />
+            <SelectField field="contb_receipt_amt" selected="True" />
+            <SelectField field="contb_receipt_dt" selected="True" />
+            <SelectField field="file_num" selected="True" />
+            <SelectField field="tran_id" selected="True" />
+            <SelectField field="election_tp" selected="True" />
+            <SelectField field="Job" selected="True" />
+            <SelectField field="MatchScore" selected="True" />
+            <SelectField field="MatchKey" selected="True" />
+            <SelectField field="Shortest_contbr_occupation" selected="True" />
+            <SelectField field="*Unknown" selected="False" />
+          </SelectFields>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText />
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxSelect" />
+    </Node>
+    <Node ToolID="26">
+      <GuiSettings Plugin="AlteryxGuiToolkit.TextBox.TextBox">
+        <Position x="846" y="246" width="108" height="48" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <Text>Number of job categories reduced  to 1197</Text>
           <Font name="Segoe UI" size="8.25" style="0" />
           <TextColor name="Black" />
           <FillColor name="White" />
@@ -422,10 +491,6 @@ Job = [contbr_occupation]
     <Connection>
       <Origin ToolID="6" Connection="Output" />
       <Destination ToolID="7" Connection="Left" />
-    </Connection>
-    <Connection>
-      <Origin ToolID="1" Connection="Output" />
-      <Destination ToolID="19" Connection="Input" />
     </Connection>
     <Connection>
       <Origin ToolID="2" Connection="Output" />
@@ -462,6 +527,14 @@ Job = [contbr_occupation]
     <Connection>
       <Origin ToolID="11" Connection="Output" />
       <Destination ToolID="20" Connection="Input" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="11" Connection="Output" />
+      <Destination ToolID="24" Connection="Input" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="11" Connection="Output" />
+      <Destination ToolID="25" Connection="Input" />
     </Connection>
     <Connection>
       <Origin ToolID="17" Connection="Output" />

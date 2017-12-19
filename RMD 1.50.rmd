@@ -544,25 +544,36 @@ table(az$contrib_gender, az$cand_gender)
 
 I would like to explore job information, and how that plays into the dataset.
 
-One major problem of this dataset is the occupation fields has a variaty of problems, such as miss-spellings and dupilcates of the the same job title ('EX. ADMIN.' &	'EXEC. ADMIN.'). These types of problems will definitly skew my findings. As an attempt to solve this problem, I decided to resort to Altryx's Fuzzy Match tool, which matches up with fields that have the same resemblance. It is not perfect by no means, but it does the job of consildating alias fields (with different namings). It decreased the number of job titles from 4955 to 240. The model is somewhat underfitted, as it has a stardardized list of job titles extracted from the main database by selecting top 240 most occuring jobs (count >= 50). Based on that list I used fuzzy matching on the whole database to fit those 240 jobs.
+One major problem of this dataset is the occupation fields has a variaty of problems, such as miss-spellings and dupilcates of the the same job title ('EX. ADMIN.' &	'EXEC. ADMIN.'). These types of problems will definitly skew my findings. As an attempt to solve this problem, I decided to resort to Altryx's Fuzzy Match tool, which matches up with fields that have the same resemblance. It is not perfect by no means, but it does the job of consildating alias fields (with different namings). It decreased the number of job titles from 4955 to 539. The model is somewhat underfitted, as it has a stardardized list of job titles extracted from the main database by selecting jobs that have 20 or more entries in the database (539 jobs). Based on that list I used fuzzy matching on the whole database to fit those 539 jobs. As a result 13,873 job records has been standardized. 
 
 
-Import std jobs DF:
+1- Export az file to alteryx
+2- Run the workflow
+3- Import standardized jobs dataframe here
 ```{r}
-az_std_jobs <- read.csv('STD Jobs 2.2.csv')
+# export file
+require(xlsx)
+write.csv(az, "az_mod1.csv")
+?install.packages
 
-table(az_std_jobs$Right_contbr_occupation)
+read.csv('az_mod1.csv')
+
+# import altryx output
+az_std_jobs <- read.csv('STD Jobs 2.0 .csv')
+
+az_std_jobs$contbr_occupation <- az_std_jobs$Right_contbr_occupation
+
 ```
 
 ```{r}
 
+length(unique(az$contbr_occupation))
 
 # most genrous occupations and account of total 
-az %>% group_by(contbr_occupation) %>%
+az_std_jobs %>% group_by(contbr_occupation) %>%
   summarise(n= n(), mean(contb_receipt_amt))
 
 
-az[az$contbr_occupation == 'MASSAGE THERAPIST',]
 
 ```
 
@@ -576,66 +587,109 @@ getmode <- function(v) {
    uniqv[which.max(tabulate(match(v, uniqv)))]
 }
 
-# get distinct empoyee contrib from each employer
-
-employer<- summary(az$contbr_employer)
-
-
-
-                                  
-
 
 #subset academia employees                               
 academia <- subset(az, grepl('UNIVERSITY|COLLEGE', az$contbr_employer,
                              ignore.case = T))
 
-
 # group by university/college
-cand_acad <- group_by(academia, contbr_employer)
+  # how much is averagly contributed by academia 
 
-# how much is averagly contributed by academia
-spend_acad <- summarise(cand_acad,
-                        number_of_contributions = n(),
-                        avg_spent = mean(contb_receipt_amt),
-                        main_cand = getmode(cand_nm),
-                        party = getmode(party)
-                        
-                        )
+academia_contrb <- academia %>% 
+  group_by(contbr_employer) %>%
+  summarise(
+            number_of_contributions = n(),
+            avg_spent = mean(contb_receipt_amt),
+            main_cand = getmode(cand_nm),
+            major_party = getmode(party)
+            )
 
+academia_contrb
 # sort by num of contribs
-attach(spend_acad)
-spend_acad <- spend_acad[order(-number_of_contributions),]
-detach(spend_acad)
-spend_acad
+attach(academia_contrb)
+academia_contrb <- academia_contrb[order(-number_of_contributions),]
+detach(academia_contrb)
+academia_contrb
+
+# Lock order
+academia_contrb$contbr_employer <- factor(academia_contrb$contbr_employer,
+                                          levels =  academia_contrb$contbr_employer)
 
 # percentage of demo/repub colleges
-percent(spend_acad$party)
+
+
+acad_party_perc <- as.data.frame(percent(academia_contrb$major_party))
+acad_party_perc$party <- c('Democrat', 'Independent', 'Republican', NA)
+acad_party_perc
 
 # Percentage of candidate preferance
-sort(percent(academia$cand_nm)[1:24],decreasing = T)
+require(tibble)
+acad_cand_per<- sort(percent(academia$cand_nm)[1:24],decreasing = T)
+acad_cand_per <- as.data.frame(acad_cand_per)
+acad_cand_per<- rownames_to_column(acad_cand_per)
+names(acad_cand_per)[1] <- 'candidate'
+names(acad_cand_per)[2] <- 'academia_majority'
+# Lock order
+acad_cand_per$candidate<- factor(acad_cand_per$candidate,
+                       levels =  acad_cand_per$candidate)
 
-# 
+
+# add plots for above findings:
+# 1- Top politcally active unvisersities
+ggplot(academia_contrb[1:10,],
+       aes(contbr_employer, number_of_contributions))+
+  geom_bar(stat='identity')+
+     theme(axis.text.x=element_text(angle=90,hjust=1))
+
+
+
+# 2- Percentage of academia party leaning
+ggplot(acad_party_perc[1:3,],
+       aes(party, `percent(academia_contrb$major_party)`))+
+  geom_bar(stat= 'identity')+
+  ylab('Percentage of party majority along institutions')
+
+
+
+# 3-  Percentage of candidate preferance
+ggplot(acad_cand_per[1:7,],
+       aes(candidate, academia_majority))+
+  geom_bar(stat= 'identity')+
+  theme(axis.text.x=element_text(angle=90,hjust=1))
+
+
+
 
 ```
-Around %80 of colleges had a democratic preference. The majority of %59 of contributions were for Clinton, Sanders comes in second of %37. Cruz came in third (%1.42) and Trump close fourth (%1.4).
+
+academia majority percentage:
+
+Around %80 of colleges had a democratic preference. The majority of %59 of contributions were for Clinton, Sanders comes in second of %37. Cruz came in third (%1.42) and Trump close fourth (%1.4). Please note that these statistics has been obtained by using the mode of each party and candidate in each university.
 
 
 Below I will find the stats of homemakers and retirees
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 
 # Homemaker stats
-homemaker <- subset(az, grepl('HOMEMAKER', az$contbr_occupation, ignore.case = T ))
+
+#subset homemakers
+homemaker <- subset(az_std_jobs, grepl('HOMEMAKER', az_std_jobs$contbr_occupation, ignore.case = T ))
 summary(homemaker)
+
 
 # Percentage of homemaker genders
 percent(homemaker$contrib_gender)
+
+homemaker
 
 # Homemaker contribs party leaning
 percent(homemaker$party)
 
 
 
+```
 
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 
 # retired findings
 retired <- subset(az, grepl('RETIRED', az$contbr_occupation, ignore.case = T))
