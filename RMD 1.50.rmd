@@ -43,7 +43,7 @@ require(zipcode)
 require(tmap)
 require(glue)
 require(githubinstall)
-
+options(scipen=5)
 
 # Install choroplethrZip
 #install.packages("devtools")
@@ -185,8 +185,6 @@ az <- merge(az, gender_df[ c("first_name", "contrib_gender")])
 
 # convert contrib_gender to factor
 az$contrib_gender <- factor(az$contrib_gender)
-
-
 
 
 
@@ -428,7 +426,8 @@ per_date <- az[az$proper_date > '2015-04-01',] %>% group_by(proper_date, party)%
 
 
 date_amt_cumulative <- ggplot(per_date[per_date$party == 'republican',],
-                   aes(x=proper_date, y=cumsum(total))) + geom_line(color= 'red', linetype="dashed") +
+                   aes(x=proper_date, y=cumsum(total))) +
+  geom_line(color= 'red', linetype="dashed") +
   geom_line(data = per_date[per_date$party == 'democrat',]
             , aes(x=proper_date, y=cumsum(total)),color='blue', linetype="dashed")
 
@@ -437,10 +436,12 @@ date_amt_cumulative
 
 
 date_num_cumulative <-ggplot(per_date[per_date$party == 'republican',],
-                   aes(x=proper_date, y=cumsum(n))) + geom_line(color= 'red', linetype="dashed") +
+                   aes(x=proper_date, y=cumsum(n)))+
+  geom_line(color= 'red', linetype="dashed") +
   geom_line(data = per_date[per_date$party == 'democrat',]
             , aes(x=proper_date, y=cumsum(n)),color='blue', linetype="dashed")
 
+date_num_cumulative
 
 
 
@@ -452,9 +453,6 @@ The above plot shows the cumulative of amount contributed and number of contribu
 
 Below we will see the number of contributions for each candidate and how they break out: 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
-# Most count of cont.
-sort(summary(az$cand_nm), decreasing= T)
-
 
 # top  cand in terms of money
 cand_groups <- group_by(az, cand_nm) 
@@ -469,23 +467,18 @@ tot_rec <- aggregate(az$contb_receipt_amt, list(az$cand_nm), sum)
 
 tot_rec <- arrange(tot_rec, desc(x))
 
-tot_rec
 
 # Top in money recieved histogram
 
 
 ggplot(data= tot_rec,
-       aes(reorder(Group.1, -x), x)) +
+       aes(reorder(Group.1, -x), x/1000000)) +
   geom_bar(stat="identity")+
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
-  
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+  xlab('Candidate')+
+  ylab('USD Received (in millions)')
 
-# Normalized
-ggplot(data= tot_rec,
-       aes(reorder(Group.1, -x), x)) +
-  geom_bar(stat="identity")+
-  scale_y_log10()+
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
 
 
 
@@ -493,12 +486,14 @@ ggplot(data= tot_rec,
 
 I would like to see the box-plot of each gender/party contribution.
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
+
 ggplot(az[!is.na(az$party) & az$party != 'independent',],
        aes(x=contrib_gender, y=contb_receipt_amt))+
   geom_boxplot(varwidth=T)+
   facet_grid(~party)+
   coord_cartesian(ylim=boxplot.stats(az$contb_receipt_amt)$stats[c(1, 5)]
 )
+
 
 
 
@@ -518,6 +513,7 @@ same_sexf<- subset(az, az$contrib_gender == 'female' &
 
 length(same_sexf$contrib_gender)/
   length(az$contrib_gender[az$contrib_gender == 'female'])
+same_sexf
 
 
 same_sexm<- subset(az, az$contrib_gender == 'male' & az$cand_gender== 'Male')
@@ -528,16 +524,49 @@ length(same_sexm$contrib_gender)/
 
 ggplot(az[!is.na(az$contrib_gender) & !is.na(az$cand_gender),] ,
        aes(cand_gender, contrib_gender))+
-  geom_bin2d()
+  geom_bin2d()+
+  scale_fill_continuous(high = "#132B43", low = "#56B1F7")
+
+
+table(az$contrib_gender, az$cand_gender)
+
+
+
 
 
 ```
 
 
 
-%54.5 females of this data-set contributed to females, while %65.4 of males contributed to males, which is a negligible preference. 
+%54.5 females of this data-set contributed to females, while %65.4 of males contributed to males, which is a negligible preference. The graph above demonstrates that preferance.
 
 
+
+I would like to explore job information, and how that plays into the dataset.
+
+One major problem of this dataset is the occupation fields has a variaty of problems, such as miss-spellings and dupilcates of the the same job title ('EX. ADMIN.' &	'EXEC. ADMIN.'). These types of problems will definitly skew my findings. As an attempt to solve this problem, I decided to resort to Altryx's Fuzzy Match tool, which matches up with fields that have the same resemblance. It is not perfect by no means, but it does the job of consildating alias fields (with different namings). It decreased the number of job titles from 4955 to 240. The model is somewhat underfitted, as it has a stardardized list of job titles extracted from the main database by selecting top 240 most occuring jobs (count >= 50). Based on that list I used fuzzy matching on the whole database to fit those 240 jobs.
+
+
+Import std jobs DF:
+```{r}
+az_std_jobs <- read.csv('STD Jobs 2.2.csv')
+
+table(az_std_jobs$Right_contbr_occupation)
+```
+
+```{r}
+
+
+# most genrous occupations and account of total 
+az %>% group_by(contbr_occupation) %>%
+  summarise(n= n(), mean(contb_receipt_amt))
+
+
+az[az$contbr_occupation == 'MASSAGE THERAPIST',]
+
+```
+
+I am curoius to see if there is a poltical lean in academia.
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 
@@ -554,8 +583,7 @@ employer<- summary(az$contbr_employer)
 
 
                                   
-# most genrous occupations and account of total 
-                                  
+
 
 #subset academia employees                               
 academia <- subset(az, grepl('UNIVERSITY|COLLEGE', az$contbr_employer,
@@ -589,7 +617,7 @@ sort(percent(academia$cand_nm)[1:24],decreasing = T)
 # 
 
 ```
-Around %80 of colleges had a democratic preference. The majority of %59 of contributions were for Clinton, Sanders cones in second of %37. Cruz came in third (%1.42) and Trump close fourth (%1.4).
+Around %80 of colleges had a democratic preference. The majority of %59 of contributions were for Clinton, Sanders comes in second of %37. Cruz came in third (%1.42) and Trump close fourth (%1.4).
 
 
 Below I will find the stats of homemakers and retirees
@@ -613,14 +641,15 @@ percent(homemaker$party)
 retired <- subset(az, grepl('RETIRED', az$contbr_occupation, ignore.case = T))
 
 #percentage of retirees in the data
-print(
+print(c('the retirees in the data are: '))
+print( 
 length(unique(retired$contbr_nm))/
   length(unique(az$contbr_nm)) * 100)
 
 
 
 # Retired party leaning percentage
-print (summary(retired$party)/ length(retired$party) *100)
+print(summary(retired$party)/ length(retired$party) *100)
 
 # Retrired avg spending
 mean(retired$contb_receipt_amt)
