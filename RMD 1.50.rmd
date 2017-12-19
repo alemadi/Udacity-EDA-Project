@@ -570,10 +570,39 @@ az_std_jobs$contbr_occupation <- az_std_jobs$Right_contbr_occupation
 length(unique(az$contbr_occupation))
 
 # most genrous occupations and account of total 
-az_std_jobs %>% group_by(contbr_occupation) %>%
-  summarise(n= n(), mean(contb_receipt_amt))
+job_n_avg <- az_std_jobs %>% group_by(contbr_occupation) %>%
+  summarise(n= n(), avg =mean(contb_receipt_amt)) %>%
+  arrange( -avg )
 
 
+
+
+
+
+#plot most contributed on average
+ggplot(job_n_avg[job_n_avg$n >110, ][1:10,],
+       aes(contbr_occupation, avg)
+)+
+  geom_bar(stat= 'identity')+
+theme(axis.text.x=element_text(angle=90,hjust=1))+
+  ggtitle('most contributed on average')
+
+
+
+# least contributed on avg
+
+least_contrib_jobs <- arrange(job_n_avg[job_n_avg$n > 200, ], avg)
+least_contrib_jobs$contbr_occupation <- factor(least_contrib_jobs$contbr_occupation,
+                                          levels =  least_contrib_jobs$contbr_occupation)
+
+ggplot(least_contrib_jobs[1:30,],
+             aes(contbr_occupation, avg)
+)+
+  geom_bar(stat= 'identity')+
+theme(axis.text.x=element_text(angle=90,hjust=1))+
+  ggtitle('least contributed on average (jobs with more than 200 entries)')
+
+  
 
 ```
 
@@ -689,6 +718,8 @@ percent(homemaker$party)
 
 ```
 
+Ritirees play a huge role in this dataset, lets find out how.
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 
 # retired findings
@@ -703,8 +734,7 @@ length(unique(retired$contbr_nm))/
 
 
 # Retired party leaning percentage
-print(summary(retired$party)/ length(retired$party) *100)
-
+percent(retired$party)
 # Retrired avg spending
 mean(retired$contb_receipt_amt)
 
