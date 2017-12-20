@@ -557,7 +557,6 @@ One major problem of this dataset is the occupation fields has a variety of prob
 # export file
 require(xlsx)
 write.csv(az, "az_mod1.csv")
-?install.packages
 
 read.csv('az_mod1.csv')
 
@@ -850,7 +849,7 @@ require(lubridate)
 election_year <- az[az$proper_date > '2016-01-01',]
 
   
-?tapply
+
 by_wk_sum <- tapply(election_year$contb_receipt_amt, week(election_year$proper_date), sum)
 
 by_wk_avg <- tapply(election_year$contb_receipt_amt, week(election_year$proper_date), mean)
@@ -914,6 +913,14 @@ clean <- function(x, y){
   new <- data.frame(region, value)
  new <- new[!duplicated(new$region), ]
 }
+
+
+#group by
+zip_avg_sum <- az %>%
+  group_by(clean_zip, party) %>%
+  summarise(
+            average_contrib = mean(contb_receipt_amt),
+            sum_of_contribs = sum(contb_receipt_amt))
 
 
 
