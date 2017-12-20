@@ -23,9 +23,11 @@ First I will begin the analysis by exploring basic statistics about the data set
 
 
 ### Data Preparation and Munging
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 # import data and packages
-az <- read.csv('P-AZ1')
+az <- read.csv('P-AZ.csv',sep = ',', row.names= NULL,)
+
+colnames(az) <- c(colnames(az)[-1],"x")
 az$x <- NULL
 
 library(ggplot2)
@@ -50,8 +52,6 @@ require(githubinstall)
 
 x <- c("ggmap", "rgdal", "rgeos", "maptools", "dplyr", "tidyr", "tmap")
 lapply(x, library, character.only = TRUE) # load the required packages
-
-
 
 
 
@@ -84,7 +84,8 @@ I wish if there was a party and a gender column, I will try to it below.
 # Note code template was taken from Udacity Forums
 
 index <- c("Johnson, Gary", "Stein, Jill", "McMullin, Evan")
-dindex <- c("Clinton, Hillary Rodham", "Sanders, Bernard", "Lessig, Lawrence", "O'Malley, Martin Joseph", "Webb, James Henry Jr.")
+dindex <- c("Clinton, Hillary Rodham", "Sanders, Bernard", "Lessig, Lawrence",
+            "O'Malley, Martin Joseph", "Webb, James Henry Jr.")
 rindex <- c('Bush, Jeb', "Carson, Benjamin S."
             , "Christie, Christopher J", "Cruz, Rafael Edward 'Ted'",
             "Fiorina, Carly", "Gilmore, James S III" ,
@@ -105,7 +106,7 @@ az$party <- factor(az$party)
 
 I also would like to add other information such as latitudes and longitudes for map analysis
 
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 data(zipcode)
 az_loc <- subset(zipcode, state == 'AZ')
 az$clean_zip <- substring(az$contbr_zip, 1, 5)
@@ -120,7 +121,7 @@ I would also like to integrate population data by zip-code from the 2010 ZCTA ce
 
 
 
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 
 
 # Add Gender col to candidates
@@ -142,9 +143,9 @@ m_index <- c('Bush, Jeb', "Carson, Benjamin S."
 f_index <- c("Clinton, Hillary Rodham", "Fiorina, Carly", "Stein, Jill" )
 
 
-
+head(az)
 #simple cand_gender
-az$cand_gender <-NA
+az$cand_gender <-'a'
 attach(az)
 az$cand_gender[cand_nm %in% m_index] <- "Male"
 az$cand_gender[cand_nm %in% f_index] <- "Female"
@@ -152,10 +153,15 @@ detach(az)
 # convert cand_gender to factor
 az$cand_gender <- factor(az$cand_gender)
 
+az$cand_gender
+
+az$cand_nm %in% m_index
+
+az
 
 ```
 Now that I added candidates' genders, I'll add the contributors' genders, by using the gender package.
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 # contributers' genders
 
 
@@ -193,7 +199,7 @@ az$contrib_gender <- factor(az$contrib_gender)
 
 
 ### Exploratory Data Analysis
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 # Create a function that gets  top ten counts
 top10 <- function(x){
   y <-table(x)
@@ -232,7 +238,7 @@ city_tab
 I would like to know how the data is distributed. 
 
 
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 
 #money disterbution
 
@@ -264,7 +270,7 @@ ggplot(az, aes(contb_receipt_amt))+
 
 
 Date distribution 
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 #Date disterbution
 ggplot(az, aes(proper_date))+
   geom_histogram(binwidth = 20)
@@ -281,7 +287,7 @@ It appears that we have negative numbers, that goes all to -5400. I believe that
 I want to find out the amount stats without the refunds.
 
 
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 
 # most popular bill denomination/   
 summary(subset(az$contb_receipt_amt, az$contb_receipt_amt > 0 ))
@@ -307,7 +313,7 @@ I wonder why the odd numbers such as 19, 27 or even 38.
 
 
 Below we will see the number of contributions for each candidate and how they break out: 
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 # Most count of cont.
 sort(summary(az$cand_nm), decreasing= T)
 
@@ -345,8 +351,9 @@ ggplot(data= tot_rec,
 ```
 
 I would like to see the box-plot of each gender/party contribution.
-```{r}
-ggplot(az[!is.na(az$party) & az$party != 'independent',], aes(x=contrib_gender, y=contb_receipt_amt))+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(az[!is.na(az$party) & az$party != 'independent',],
+       aes(x=contrib_gender, y=contb_receipt_amt))+
   geom_boxplot(varwidth=T)+
   facet_grid(~party)+
   coord_cartesian(ylim=boxplot.stats(az$contb_receipt_amt)$stats[c(1, 5)]
@@ -358,24 +365,28 @@ ggplot(az[!is.na(az$party) & az$party != 'independent',], aes(x=contrib_gender, 
 ```
 Republicans contributed more on average, and they had a higher range of contribution amounts. Male republicans contributed slightly more on average than their female counterparts. 
 
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 table(az$contrib_gender)
 ```
 I did not expect to find more female contributors than males in this data-set. 
 
 Lets explore if females were more likely to vote for female candidates.
-```{r}
-same_sexf<- subset(az, az$contrib_gender == 'female' & az$cand_gender== 'Female')
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+same_sexf<- subset(az, az$contrib_gender == 'female' &
+                     az$cand_gender== 'Female')
 
-length(same_sexf$contrib_gender)/length(az$contrib_gender[az$contrib_gender == 'female'])
+length(same_sexf$contrib_gender)/
+  length(az$contrib_gender[az$contrib_gender == 'female'])
 
 
 same_sexm<- subset(az, az$contrib_gender == 'male' & az$cand_gender== 'Male')
 
-length(same_sexm$contrib_gender)/ length(az$contrib_gender[az$contrib_gender == 'male'])
+length(same_sexm$contrib_gender)/
+  length(az$contrib_gender[az$contrib_gender == 'male'])
 
 
-ggplot(az[!is.na(az$contrib_gender) & !is.na(az$cand_gender),] , aes(cand_gender, contrib_gender))+
+ggplot(az[!is.na(az$contrib_gender) & !is.na(az$cand_gender),] ,
+       aes(cand_gender, contrib_gender))+
   geom_bin2d()
 
 
@@ -384,7 +395,7 @@ ggplot(az[!is.na(az$contrib_gender) & !is.na(az$cand_gender),] , aes(cand_gender
 
 
 
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 
 # Create the mode function.
 getmode <- function(v) {
@@ -403,7 +414,8 @@ employer<- summary(az$contbr_employer)
                                   
 
 #subset academia employees                               
-academia <- subset(az, grepl('UNIVERSITY|COLLEGE', az$contbr_employer, ignore.case = T))
+academia <- subset(az, grepl('UNIVERSITY|COLLEGE', az$contbr_employer,
+                             ignore.case = T))
 
 
 # group by university/college
@@ -437,7 +449,7 @@ Around %80 of colleges had a democratic preference. The majority of %59 of contr
 
 
 Below I will find the stats of homemakers and retirees
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 
 # Homemaker stats
 homemaker <- subset(az, grepl('HOMEMAKER', az$contbr_occupation, ignore.case = T ))
@@ -487,7 +499,7 @@ As we can see above, retirees make up about %35.6 of the data-set. Around %60 of
 
 I want to know which occupations are most politically active, and how do they lean politically.
 
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 jobs <-data.matrix(summary(az$contbr_occupation))
 
 head(jobs,10)
@@ -495,7 +507,7 @@ head(jobs,10)
 The most politically active occupations in the data set are attorneys, physicians then teachers.
 
 Below I would like to know the proportions of party leaning for each job. For example, of all engineers how many percent of them lean republican (number of republican engineers/ total number of engineers).
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 require(GGally)
 require(gmodels)
 
@@ -542,7 +554,8 @@ ggplot(top10rep,
 
 
 # subset top 10 democrats jobs
-top10demo <-subset(job_party_props, party == 'democrat' & total > 1000 & quantile(job_party_props$Freq, c(.660), na.rm = T))
+top10demo <-subset(job_party_props, party == 'democrat' & total > 1000
+                   & quantile(job_party_props$Freq, c(.660), na.rm = T))
 
 # create a bar plot
 ggplot(top10demo,
@@ -551,7 +564,9 @@ ggplot(top10demo,
 
 
 # subset top 10 independents jobs
-top10inde <-subset(job_party_props, party == 'independent' & Freq > quantile(Freq, probs = .62, na.rm = T) & total >100 & Var1 != 'N/A')
+top10inde <-subset(job_party_props, party == 'independent' & 
+                     Freq > quantile(Freq, probs = .62, na.rm = T)
+                   & total >100 & Var1 != 'N/A')
 
 # create a bar plot
 ggplot(top10inde,
@@ -568,7 +583,7 @@ ggplot(top10inde,
 
 
 I would like to see average spending along dates
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 #group by avg week
 require(lubridate)
 
@@ -589,8 +604,8 @@ az$month <-format(az$proper_date, format = "%m")
 az$year <-format(az$proper_date, format = "%y")
 
 by_wk <- az %>% group_by(year = as.numeric(year), week= as.numeric(week), party) %>% summarise(sum = sum(contb_receipt_amt), 
-                                                                                  avg = mean(contb_receipt_amt),
-                                                                                  n=n())
+              avg = mean(contb_receipt_amt),
+              n=n())
 
 
 
@@ -606,7 +621,7 @@ It seems that the avg amount of contributions are huge at the beginning of 2015,
 
 
 
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 library(choroplethrZip)
 library(choroplethr)
 require(glue)
@@ -619,7 +634,7 @@ az_demographics <- subset(zip.regions, region > 85001 & region < 86556)
 ```
 
 
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 # create a function that selects zipcode and region for zip_choropleth analysis
 
 clean <- function(x, y){
@@ -643,18 +658,28 @@ zip_avg_sum <- az %>%
 # Democratic contrib heatmap
 demo_zip_avg_sum <- na.omit(zip_avg_sum[zip_avg_sum$party == 'democrat',])
 
-demo_zip_avg_sum <- clean(demo_zip_avg_sum$clean_zip, demo_zip_avg_sum$sum_of_contribs)
-demo_heat <- zip_choropleth(demo_zip_avg_sum,state_zoom = 'arizona', county_zoom = 4013 )+
-  ggtitle('Maricopa County Total USD Contribution (by Zipcode)', subtitle = 'Democratic Party Candidates')+
+demo_zip_avg_sum <- clean(demo_zip_avg_sum$clean_zip, 
+                          demo_zip_avg_sum$sum_of_contribs)
+
+demo_heat <- zip_choropleth(demo_zip_avg_sum,state_zoom = 'arizona',
+                            county_zoom = 4013 )+
+  ggtitle('Maricopa County Total USD Contribution (by Zipcode)', 
+          subtitle = 'Democratic Party Candidates')+
   labs(color= 'USD Amount')
 
 # Republican contrib heatmap 
 repub_zip_avg_sum <- na.omit(zip_avg_sum[zip_avg_sum$party == 'republican',])
-repub_zip_avg_sum <- clean(repub_zip_avg_sum$clean_zip, repub_zip_avg_sum$sum_of_contribs)
-repub_heat <- zip_choropleth(repub_zip_avg_sum,state_zoom = 'arizona', county_zoom = 4013)+
-  ggtitle(' ',subtitle =  'Republican Party Candidates')
+repub_zip_avg_sum <- clean(repub_zip_avg_sum$clean_zip,
+                           repub_zip_avg_sum$sum_of_contribs)
+repub_zip_avg_sum
+repub_heat <- zip_choropleth(repub_zip_avg_sum,
+                             state_zoom = 'arizona', county_zoom = 4013)+
+  ggtitle(' ',subtitle =  'Republican Party Candidates') + 
+  scale_fill_brewer(palette="Reds")
+  
 # why I can't change the color to red.
 
+repub_heat
 
 # problem: heatmap scales are not matching, 
 grid.arrange(demo_heat, repub_heat)
@@ -679,19 +704,21 @@ grid.arrange(demo_heat, repub_heat)
 
 
 
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 # Final plot 3
 require(choroplethrMaps)
 
 df_zip_demographics <- subset(df_zip_demographics, region > 85001 & region < 86556) 
 
-ALLdemographics_df<- merge.data.frame(df_zip_demographics, zip.regions, by.x='region', by.y='region')
+ALLdemographics_df<- merge.data.frame(df_zip_demographics, zip.regions,
+                                      by.x='region', by.y='region')
 
 ALLdemographics_df
 
 
 
-az_county<- merge.data.frame(az,ALLdemographics_df , by.x='clean_zip', by.y = 'region')
+az_county<- merge.data.frame(az,ALLdemographics_df,
+                             by.x='clean_zip', by.y = 'region')
 
 az_county
 
@@ -713,7 +740,8 @@ az_countyP1 <- na.omit(az_countyP1)
 county_choropleth(az_countyP1, state_zoom = 'arizona')
 
 # group by county & party
-az_county_party <- merge(x = az_county, y = az[, c("party","tran_id" )], by = "tran_id", all.x=TRUE)
+az_county_party <- merge(x = az_county, y = az[, c("party","tran_id" )],
+                         by = "tran_id", all.x=TRUE)
 
 az_county_party_grouped <- az_county_party %>%
   group_by(county.fips.numeric, party.x) %>%
@@ -721,7 +749,9 @@ az_county_party_grouped <- az_county_party %>%
 
 # Plot demo avg_contribution by county
 
-az_countyP1Demo <- with(az_county_party_grouped[az_county_party_grouped$party.x == 'democrat',] , clean(county.fips.numeric, average))
+az_countyP1Demo <- 
+  with(az_county_party_grouped[az_county_party_grouped$party.x == 'democrat',],
+       clean(county.fips.numeric, average))
 
 P1Demo <-county_choropleth(na.omit(az_countyP1Demo), state_zoom = 'arizona')+
     ggtitle(label = 'Democrate Average Contribution', subtitle = 'By County')
@@ -734,10 +764,13 @@ P1Demo <-county_choropleth(na.omit(az_countyP1Demo), state_zoom = 'arizona')+
 
 # Plot repub avg_contribution by county
 
-az_countyP1Repub <- with(az_county_party_grouped[az_county_party_grouped$party.x == 'republican',] , clean(county.fips.numeric, average))
+az_countyP1Repub <-
+  with(az_county_party_grouped[az_county_party_grouped$party.x == 'republican',],
+       clean(county.fips.numeric, average))
 
 P1Repub <- county_choropleth(na.omit(az_countyP1Repub), state_zoom = 'arizona')+
-  ggtitle(label = 'Republican Average Contribution', subtitle = 'By County')
+  ggtitle(label = 'Republican Average Contribution', subtitle = 'By County') +
+  scale_fill_brewer(palette="Reds")
 
 
 
@@ -761,7 +794,7 @@ What kind of graphs could I add?
 I am wondering what kind jobs contributed to Donald trump, my intuition says it's mostly blue collar jobs. Let's find out!
 
 
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 #-Bar chart of most contributing jobs to the donald
 
 Trump_jobs<- az[az$cand_nm == "Trump, Donald J.",] %>%
@@ -778,7 +811,8 @@ group_by(job=contbr_occupation) %>%
   summarise(avg = mean(contb_receipt_amt),
             n = n())
 
-ggplot(Clinton_jobs[Clinton_jobs$n >390 & Clinton_jobs$avg > 0 ,], aes(x=job, y=avg))+
+ggplot(Clinton_jobs[Clinton_jobs$n >390 & Clinton_jobs$avg > 0 ,],
+       aes(x=job, y=avg))+
 geom_bar(stat = 'identity')
 
 unique(az$cand_nm)
@@ -787,7 +821,7 @@ unique(az$cand_nm)
 My hypothesis is false, most of trumps contributors have white collar jobs, even the higher income types such as engineers, consultants, physicians and CEOs. One weakness of this plot, it does not represent low income contributors.
 
 let me see by number of contributions only if it helps me find out more,
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 
 ggplot(Trump_jobs[Trump_jobs$n >100 & Trump_jobs$n < 2000,], aes(x=job, y=n))+
 geom_bar(stat = 'identity')
@@ -811,12 +845,15 @@ By changing some of the subset filters, still the majority were high income occu
 
 
 I want to see if higher income zip-codes had more contributions and I will use a scatter-plot to demonstrate.
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 # final plots 2
 # merge demographic data with original dataset
-AZ_ALLdemographics_df <- merge.data.frame(az, ALLdemographics_df, by.x = 'clean_zip', by.y = 'region')
-income_cotrib <- AZ_ALLdemographics_df %>% group_by(clean_zip, income= per_capita_income)%>% summarise(n = n(), total= sum(contb_receipt_amt),
-                                                                                                       average = mean(contb_receipt_amt))
+AZ_ALLdemographics_df <- merge.data.frame(az, ALLdemographics_df,
+                                          by.x = 'clean_zip', by.y = 'region')
+income_cotrib <- AZ_ALLdemographics_df %>%
+  group_by(clean_zip, income= per_capita_income)%>% 
+  summarise(n = n(), total= sum(contb_receipt_amt),
+            average = mean(contb_receipt_amt))
 
 
 
@@ -834,7 +871,8 @@ ggplot(income_cotrib[income_cotrib$n >100,], aes(income, average))+
   geom_smooth()+
   xlab('Median Income per Zipcode')+
   ylab('Average Contibution per Zipcode')+
-  ggtitle('Relationship Between Average USD Amount of Contributions and Median Income', subtitle = 'Per Zipcode')
+  ggtitle('Relationship Between Average USD Amount of Contributions and Median Income',
+          subtitle = 'Per Zipcode')
 
 
 
@@ -847,7 +885,7 @@ There is only a strong relationship When I subsetted the data to 100 contributio
 
 
 This is obvious but still I would like to see the relationship between number of contributions and population of zip-code.
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 #final plot 1
 
 AZ_ALLdemographics_df
@@ -875,7 +913,7 @@ There is a strong correlation at first, but then as population increases the rel
 
 
 ### Final Plots:
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 finalp1<- ggplot(subset(na.omit(by_wk), avg> 0 & year > 14),
        aes(as.numeric(week), avg, color=party, size=n))+ geom_line()+
   facet_grid(~year)+
@@ -911,7 +949,8 @@ finalp4 <- ggplot(income_cotrib[income_cotrib$n >100,], aes(income, average))+
   geom_smooth()+
   xlab('Median Income per Zipcode')+
   ylab('Average Contibution per Zipcode')+
-  ggtitle('Relationship Between Average USD Amount of Contributions and Median Income', subtitle = 'Per Zipcode')
+  ggtitle('Relationship Between Average USD Amount of Contributions and Median Income',
+          subtitle = 'Per Zipcode')
 
 finalp4
 

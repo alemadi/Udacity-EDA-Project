@@ -1,0 +1,1308 @@
+---
+title: "EDA Project"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+### Introduction
+
+This is the 4th project of Udacity's Data Analyst NanoDegree Program. We were given several data sources as options to analyze from. I chose the Arizona's 2016 Presidential Campaign Finance from the Federal Election Commission (FEC) website.
+
+The format of this analysis will be as the following: 
+
+1- I will declare my intentions with a hypothesis (if applicable) 
+
+2- Insert a R snippet/code and run it
+
+3- Declare my findings.
+
+And so on...
+
+First I will begin the analysis by exploring basic statistics about the data set. This will help me see the nature of the data, and whether the data needs cleaning or wrangling. Afterwards, I will explore variable and multivariate relationships, by using the methods I have learned in chapter 4, such as scatter, line, box plots and histograms. This is the basic outline of the analysis, but surely I will find interesting things to talk about along the way. 
+
+
+### Data Preparation and Munging
+```{r message=FALSE, warning=FALSE, include=FALSE}
+# import data and packages
+az <- read.csv('P-AZ.csv',sep = ',', row.names= NULL,)
+
+colnames(az) <- c(colnames(az)[-1],"x")
+az$x <- NULL
+
+library(ggplot2)
+library(plyr)
+library(dplyr)
+library(gridExtra)
+library(memisc)
+library(reshape2)
+library(gender)
+library(stringr)
+require(magrittr)
+require(zipcode)
+require(tmap)
+require(glue)
+require(githubinstall)
+options(scipen=5)
+
+# Install choroplethrZip
+#install.packages("devtools")
+#library(devtools)
+#install_github('arilamstein/choroplethrZip@v1.5.0')
+
+x <- c("ggmap", "rgdal", "rgeos", "maptools", "dplyr", "tidyr", "tmap")
+lapply(x, library, character.only = TRUE) # load the required packages
+
+
+
+# convert zip code to factor
+az$contbr_zip <- factor(az$contbr_zip)
+#convert from char to date class
+az$proper_date <- as.Date(az$contb_receipt_dt, format = '%d-%B-%y')
+
+az
+
+```
+
+
+
+
+The structure of the data is as the following The file has 19 variables, and these are the most important ones to for the analysis:
+
++ Candidate's Name 
++ Contributor's City
++ Contributor's Employer
++ Contribution's Occupation
++ Contribution Amount
++ Contribution's Date
+
+
+I wish if there was a party and a gender column, I will try to it below. 
+
+```{r include=FALSE}
+
+
+# Add party col
+# Note code template was taken from Udacity Forums
+
+index <- c("Johnson, Gary", "Stein, Jill", "McMullin, Evan")
+dindex <- c("Clinton, Hillary Rodham", "Sanders, Bernard", "Lessig, Lawrence",
+            "O'Malley, Martin Joseph", "Webb, James Henry Jr.")
+rindex <- c('Bush, Jeb', "Carson, Benjamin S."
+            , "Christie, Christopher J", "Cruz, Rafael Edward 'Ted'",
+            "Fiorina, Carly", "Gilmore, James S III" ,
+            "Graham, Lindsey O.", "Huckabee, Mike", 
+            "Jindal, Bobby", "Kasich, John R.",
+            "Paul, Rand", "Perry, James R. (Rick)",
+            "Rubio, Marco", "Trump, Donald J.",
+            "Walker, Scott",  "Christie, Christopher J.", 'Santorum, Richard J.')
+attach(az)
+az$party[cand_nm %in% index] <- "independent"
+az$party[cand_nm %in% dindex] <- "democrat"
+az$party[cand_nm %in% rindex] <- 'republican'
+detach(az)
+
+
+
+# Convert party to factor
+az$party <- factor(az$party)
+
+```
+
+I also would like to add other information such as latitudes and longitudes for map analysis
+
+Below I have standardized the zipcodes to a 5 digit zipcodes and added the to a new column called 'clean_zip'.
+These standardized zipcodes will be used in my analysis afterwards.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+data(zipcode)
+az_loc <- subset(zipcode, state == 'AZ')
+az$clean_zip <- substring(az$contbr_zip, 1, 5)
+az <- merge(az, az_loc, by.x = 'clean_zip', by.y = 'zip')
+
+
+
+
+```
+
+
+
+I will add candidate gender column below
+```{r}
+
+
+# Add Gender col to candidates
+
+# Gender indices
+m_index <- c('Bush, Jeb', "Carson, Benjamin S."
+            , "Christie, Christopher J", "Cruz, Rafael Edward 'Ted'",
+            "Gilmore, James S III" ,
+            "Graham, Lindsey O.", "Huckabee, Mike", 
+            "Jindal, Bobby", "Kasich, John R.",
+            "Paul, Rand", "Perry, James R. (Rick)",
+            "Rubio, Marco", "Trump, Donald J.",
+            "Walker, Scott", "Sanders, Bernard",
+            "Lessig, Lawrence", "O'Malley, Martin Joseph",
+            "Webb, James Henry Jr.", "Johnson, Gary",
+            "McMullin, Evan", "Christie, Christopher J.", 'Santorum, Richard J.'	
+            )
+
+f_index <- c("Clinton, Hillary Rodham", "Fiorina, Carly", "Stein, Jill" )
+
+
+
+#simple cand_gender
+az$cand_gender <- NA
+attach(az)
+az$cand_gender[cand_nm %in% m_index] <- "Male"
+az$cand_gender[cand_nm %in% f_index] <- "Female"
+detach(az)
+# convert cand_gender to factor
+az$cand_gender <- factor(az$cand_gender)
+
+
+
+```
+
+```{r}
+
+```
+Now that I added candidates' genders, I'll add the contributors' genders, by using the gender package.
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+# contributers' genders
+
+
+
+# Get first names in a seperate col
+az$first_name <- str_split_fixed(az$contbr_nm, ", ", 2)[,2]
+
+# Use gender function
+gender_df <- gender(as.character(az$first_name), c(1932, 1998),
+countries= "United States")
+
+# Assign gender to contributers in az df
+names(gender_df)[1] = "first_name"
+names(gender_df)[4] = 'contrib_gender'
+gender_df <- unique(gender_df)
+az <- merge(az, gender_df[ c("first_name", "contrib_gender")])
+
+# convert contrib_gender to factor
+az$contrib_gender <- factor(az$contrib_gender)
+
+
+
+
+
+
+
+
+
+
+
+
+```
+
+
+### Exploratory Data Analysis
+
+Below I will explore the top occurrences (counts) of the following:
+
+1- Cities
+2- Candidates
+3- Contributors
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+# Create a function that gets  top ten counts
+top10 <- function(x){
+  y <-table(x)
+  y <- sort(y, decreasing = T)
+  y <- as.data.frame(y)
+  y[1:10,]
+
+  
+  
+}
+  
+  
+
+# count city occurences in data set
+city_tab <- top10(az$contbr_city)
+
+
+ggplot(city_tab, aes(x, Freq))+
+  geom_bar(stat='identity') +
+  theme(axis.text.x=element_text(angle=90,hjust=1))
+
+# top cand counts
+top_cand <-top10(az$cand_nm)
+
+ggplot(top_cand, aes(x, Freq))+
+  geom_bar(stat='identity')+
+  theme(axis.text.x=element_text(angle=90,hjust=1))
+
+# top contribs counts
+top_contribs <- top10(az$contbr_nm)
+
+
+ggplot(top_contribs, aes(x, Freq))+
+  geom_bar(stat='identity')+
+  theme(axis.text.x=element_text(angle=90,hjust=1))
+
+
+```
+
+Now I would like to explore the distribution by sum of money contributed.
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+# Top total contribututers by 
+wealth <- az %>% group_by(contbr_nm) %>%
+  summarise(Total = sum(contb_receipt_amt))
+
+wealthy_contribs <- head(sort(wealth$Total, decreasing = T), 1000)
+
+ggplot(as.data.frame.numeric(wealthy_contribs), aes(wealthy_contribs))+
+  geom_histogram()
+
+weatlhty_df <- as.data.frame.table(table(wealthy_contribs))
+
+weatlhty_df[weatlhty_df$Freq >10 ,]
+
+```
+
+The above dataframe has made me curious as why these particular total amounts were contributed. After some research I have found some interesting findings, regarding the most common total amount (
+$2,700) according to the Federal Election Commission's website (https://transition.fec.gov/pages/brochures/citizens.shtml), it states that "An individual may give a maximum of:
+
+$2,700 per election to a federal candidate or the candidate's campaign committee."
+
+Regarding the 3rd most common amount (5,400) the website states "A husband and wife each have separate contribution limits, even if only one spouse has an income. For example, a couple may contribute a $5,400 check to a candidate's primary campaign as long as both sign the check." 
+
+The point that I am trying to make here is we can use this dataframe to infer what kind of contributors we have in the dataset, such as couples, singles, fundraisers, corporate and etc..
+
+
+
+I would like to know how the data is distributed in terms of candidate and contributor gender count in the dataset.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+# contrib gender bar
+ggplot(az, aes(contrib_gender))+
+  geom_bar()
+
+# candidate gender bar
+ggplot(az, aes(cand_gender))+
+  geom_bar()
+
+
+
+```
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+# party dist.
+party_count <- ggplot(az[az$party != 'independent',], aes(party))+
+  geom_bar()
+party_count
+
+#party total
+
+party_total <- az %>% group_by(party) %>%
+  summarise(total = sum(contb_receipt_amt))
+
+party_sum <- ggplot(party_total[party_total$party != 'independent',], aes(party, total))+
+    geom_bar(stat='identity')
+
+grid.arrange(party_count, party_sum, ncol=2)
+
+```
+
+The plot on the left shows the count of contributions for each party, and the plot on the right shows the sum of contributions to each party. 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+#money disterbution
+
+ggplot(az, aes(contb_receipt_amt))+
+  geom_histogram(binwidth = 15)+
+  coord_cartesian(xlim=c(0:500))
+
+# Negative money disterbution
+ggplot(az[az$contb_receipt_amt < -1,], aes(contb_receipt_amt))+
+  geom_histogram()+
+  ggtitle('Negative money distribution')
+
+
+
+#money disterbution normalized
+
+ggplot(az, aes(contb_receipt_amt))+
+  geom_histogram()+
+  scale_x_log10()
+
+
+
+
+
+
+ggplot(az, aes(contb_receipt_amt))+
+  geom_freqpoly()
+
+
+
+
+
+```
+
+
+
+
+It appears that we have negative numbers, that goes all to -5400. I believe that it represents refunds, since the most receipt comment is refund.
+
+I want to find out the amount stats without the refunds.
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+# most popular bill denomination/   
+summary(subset(az$contb_receipt_amt, az$contb_receipt_amt > 0 ))
+non_zero_rec <- subset(az$contb_receipt_amt, az$contb_receipt_amt > 0 )
+tab <- table(non_zero_rec)
+str(tab)
+
+
+tab[tab>1000]
+
+
+top_deno<- top10(az$contb_receipt_amt)
+
+ggplot(top_deno, aes(x, Freq))+
+  geom_bar(stat='identity')+
+  xlab('USD Denominations')
+
+```
+
+I wonder why the odd numbers such as 19, 27 or even 38.  
+
+
+
+This video from the Sanders campaign intrigued me (https://www.youtube.com/watch?v=3nJhuVBXlXk), it claims that the average contribution for the Sanders campaign was $27. Meaning that most Bernie supporters are low income workers.
+
+I would like to explore what is the median contribution received for each candidate. To be fair, I have excluded candidates that had less than 400 contributions from the dataset. 
+
+
+```{r}
+# Idea: see the average of each candidate contriubution, think: Bernie's $27 campain
+avg_amt_cand <- az[az$contb_receipt_amt > 0, ] %>% group_by(cand_nm) %>%
+  summarise(avg = mean(contb_receipt_amt),
+            median = median(contb_receipt_amt),
+            n= n())
+
+
+avg_amt_cand
+
+ggplot(avg_amt_cand[avg_amt_cand$n > 400,],
+       aes(cand_nm, median))+
+  geom_bar(stat = 'identity')+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+
+
+```
+
+Interestingly, the highest median contributions were given to republican candidates. Meanwhile, both Clinton and Sanders had the least median of contribution amounts. 
+
+
+Below I would like to first discover the date distribution of contributions.
+
+The second graph demonstrates the volume of distributions per candidate along the dates. From the graph we can see when did each campaign gain or lose it's momentum, also it is apparent when the candidates dropped out of the race.
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#Date disterbution
+ggplot(az[az$proper_date > '2015-04-01',], aes(proper_date))+
+  geom_histogram(binwidth = 20)
+
+ggplot(az[az$proper_date > '2015-04-01',], aes(proper_date, cand_nm))+
+  geom_count()
+
+
+```
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+per_date <- az[az$proper_date > '2015-04-01',] %>% group_by(proper_date, party)%>%
+  summarize(total = sum(contb_receipt_amt),
+  n = n())
+
+
+date_amt_cumulative <- ggplot(per_date[per_date$party == 'republican',],
+                   aes(x=proper_date, y=cumsum(total))) +
+  geom_line(color= 'red', linetype="dashed") +
+  geom_line(data = per_date[per_date$party == 'democrat',]
+            , aes(x=proper_date, y=cumsum(total)),color='blue', linetype="dashed")
+
+
+date_amt_cumulative
+
+
+date_num_cumulative <-ggplot(per_date[per_date$party == 'republican',],
+                   aes(x=proper_date, y=cumsum(n)))+
+  geom_line(color= 'red', linetype="dashed") +
+  geom_line(data = per_date[per_date$party == 'democrat',]
+            , aes(x=proper_date, y=cumsum(n)),color='blue', linetype="dashed")
+
+date_num_cumulative
+
+
+
+grid.arrange(date_amt_cumulative, date_num_cumulative)
+
+```
+The above plot shows the cumulative of amount contributed and number of contributions along the dates, breaked down by party. Republicans have contributed slightly more in total, but the number of democratic contributions significantly outweighs the number of republican contributions. 
+
+
+Below we will see the number of contributions for each candidate and how they break out: 
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+# top  cand in terms of money
+cand_groups <- group_by(az, cand_nm) 
+
+cand_sum <-summarize(cand_groups, 
+                      mean(contb_receipt_amt),
+                      n = n())
+
+
+tot_rec <- aggregate(az$contb_receipt_amt, list(az$cand_nm), sum)
+
+
+tot_rec <- arrange(tot_rec, desc(x))
+
+
+# Top in money recieved histogram
+
+
+ggplot(data= tot_rec,
+       aes(reorder(Group.1, -x), x/1000000)) +
+  geom_bar(stat="identity")+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+  xlab('Candidate')+
+  ylab('USD Received (in millions)')
+
+
+
+
+
+```
+
+I would like to see the box-plot of each gender/party contribution.
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+ggplot(az[!is.na(az$party) & az$party != 'independent',],
+       aes(x=contrib_gender, y=contb_receipt_amt))+
+  geom_boxplot(varwidth=T)+
+  facet_grid(~party)+
+  coord_cartesian(ylim=boxplot.stats(az$contb_receipt_amt)$stats[c(1, 5)]
+)
+
+
+
+
+
+```
+Republicans contributed more on average, and they had a higher range of contribution amounts. Male republicans contributed slightly more on average than their female counterparts. 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+table(az$contrib_gender)
+```
+I did not expect to find more female contributors than males in this data-set. 
+
+Lets explore if females were more likely to vote for female candidates.
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+same_sexf<- subset(az, az$contrib_gender == 'female' &
+                     az$cand_gender== 'Female')
+
+length(same_sexf$contrib_gender)/
+  length(az$contrib_gender[az$contrib_gender == 'female'])
+same_sexf
+
+
+same_sexm<- subset(az, az$contrib_gender == 'male' & az$cand_gender== 'Male')
+
+length(same_sexm$contrib_gender)/
+  length(az$contrib_gender[az$contrib_gender == 'male'])
+
+
+ggplot(az[!is.na(az$contrib_gender) & !is.na(az$cand_gender),] ,
+       aes(cand_gender, contrib_gender))+
+  geom_bin2d()+
+  scale_fill_continuous(high = "#132B43", low = "#56B1F7")
+
+
+table(az$contrib_gender, az$cand_gender)
+
+
+
+
+
+```
+
+
+
+%54.5 females of this data-set contributed to females, while %65.4 of males contributed to males, which is a negligible preference. The graph above demonstrates that preference.
+
+
+
+I would like to explore job information, and how that plays into the dataset.
+
+One major problem of this dataset is the occupation fields has a variety of problems, such as miss-spellings and duplicates of the the same job title ('EX. ADMIN.' &	'EXEC. ADMIN.'). These types of problems will definitely skew my findings. As an attempt to solve this problem, I decided to resort to Altryx's Fuzzy Match tool, which matches up with fields that have the same resemblance. It is not perfect by no means, but it does the job of consolidating alias fields (with different namings). It decreased the number of job titles from 4955 to 539. The model is somewhat underfitted, as it has a standardized list of job titles extracted from the main database by selecting jobs that have 20 or more entries in the database (539 jobs). Based on that list I used fuzzy matching on the whole database to fit those 539 jobs. As a result 13,873 job records has been standardized. 
+
+
+1- Export az file to alteryx
+2- Run the workflow
+3- Import standardized jobs dataframe here
+```{r}
+# export file
+require(xlsx)
+write.csv(az, "az_mod1.csv")
+
+read.csv('az_mod1.csv')
+
+# import altryx output
+az_std_jobs <- read.csv('STD Jobs 2.0 .csv')
+
+az_std_jobs$contbr_occupation <- az_std_jobs$Right_contbr_occupation
+
+```
+
+```{r}
+
+length(unique(az$contbr_occupation))
+
+# most genrous occupations and account of total 
+job_n_avg <- az_std_jobs %>% group_by(contbr_occupation) %>%
+  summarise(n= n(), avg =mean(contb_receipt_amt)) %>%
+  arrange( -avg )
+
+
+
+
+
+
+#plot most contributed on average
+ggplot(job_n_avg[job_n_avg$n >110, ][1:10,],
+       aes(contbr_occupation, avg)
+)+
+  geom_bar(stat= 'identity')+
+theme(axis.text.x=element_text(angle=90,hjust=1))+
+  ggtitle('most contributed on average')
+
+
+
+# least contributed on avg
+
+least_contrib_jobs <- arrange(job_n_avg[job_n_avg$n > 200, ], avg)
+least_contrib_jobs$contbr_occupation <- factor(least_contrib_jobs$contbr_occupation,
+                                          levels =  least_contrib_jobs$contbr_occupation)
+
+ggplot(least_contrib_jobs[1:30,],
+             aes(contbr_occupation, avg)
+)+
+  geom_bar(stat= 'identity')+
+theme(axis.text.x=element_text(angle=90,hjust=1))+
+  ggtitle('least contributed on average (jobs with more than 200 entries)')
+
+  
+
+```
+
+I am curious to see if there is a political lean in academia.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+# Create the mode function.
+getmode <- function(v) {
+   uniqv <- unique(v)
+   uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+
+
+#subset academia employees                               
+academia <- subset(az, grepl('UNIVERSITY|COLLEGE', az$contbr_employer,
+                             ignore.case = T))
+
+# group by university/college
+  # how much is averagly contributed by academia 
+
+academia_contrb <- academia %>% 
+  group_by(contbr_employer) %>%
+  summarise(
+            number_of_contributions = n(),
+            avg_spent = mean(contb_receipt_amt),
+            main_cand = getmode(cand_nm),
+            major_party = getmode(party)
+            )
+
+academia_contrb
+# sort by num of contribs
+attach(academia_contrb)
+academia_contrb <- academia_contrb[order(-number_of_contributions),]
+detach(academia_contrb)
+academia_contrb
+
+# Lock order
+academia_contrb$contbr_employer <- factor(academia_contrb$contbr_employer,
+                                          levels =  academia_contrb$contbr_employer)
+
+# percentage of demo/repub colleges
+
+
+acad_party_perc <- as.data.frame(percent(academia_contrb$major_party))
+acad_party_perc$party <- c('Democrat', 'Independent', 'Republican', NA)
+acad_party_perc
+
+# Percentage of candidate preferance
+require(tibble)
+acad_cand_per<- sort(percent(academia$cand_nm)[1:24],decreasing = T)
+acad_cand_per <- as.data.frame(acad_cand_per)
+acad_cand_per<- rownames_to_column(acad_cand_per)
+names(acad_cand_per)[1] <- 'candidate'
+names(acad_cand_per)[2] <- 'academia_majority'
+# Lock order
+acad_cand_per$candidate<- factor(acad_cand_per$candidate,
+                       levels =  acad_cand_per$candidate)
+
+
+# add plots for above findings:
+# 1- Top politcally active unvisersities
+ggplot(academia_contrb[1:10,],
+       aes(contbr_employer, number_of_contributions))+
+  geom_bar(stat='identity')+
+     theme(axis.text.x=element_text(angle=90,hjust=1))
+
+
+
+# 2- Percentage of academia party leaning
+ggplot(acad_party_perc[1:3,],
+       aes(party, `percent(academia_contrb$major_party)`))+
+  geom_bar(stat= 'identity')+
+  ylab('Percentage of party majority along institutions')
+
+
+
+# 3-  Percentage of candidate preferance
+ggplot(acad_cand_per[1:7,],
+       aes(candidate, academia_majority))+
+  geom_bar(stat= 'identity')+
+  theme(axis.text.x=element_text(angle=90,hjust=1))
+
+
+
+
+```
+
+academia majority percentage:
+
+Around %80 of colleges had a democratic preference. The majority of %59 of contributions were for Clinton, Sanders comes in second of %37. Cruz came in third (%1.42) and Trump close fourth (%1.4). Please note that these statistics has been obtained by using the mode of each party and candidate in each university.
+
+
+Below I will find the stats of homemakers.
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+# Homemaker stats
+
+#subset homemakers
+homemaker <- subset(az_std_jobs, grepl('HOMEMAKER', az_std_jobs$contbr_occupation, ignore.case = T ))
+
+
+homemaker
+# Percentage of homemaker genders
+percent(homemaker$contrib_gender)
+
+homemaker
+
+# Homemaker contribs party leaning
+percent(homemaker$party)
+
+
+
+```
+Though not surprising, 96%  of homemakers in this dataset are females.  
+
+66% of homemakers in the dataset are democrats, while 33% are republicans.
+
+
+Retirees play a huge role in this dataset, lets find out how.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+# retired findings
+retired <- subset(az_std_jobs, grepl('RETIRED', az_std_jobs$contbr_occupation, ignore.case = T))
+
+#percentage of retirees in the data
+print(c('the retirees in the data are: '))
+print( 
+length(unique(retired$contbr_nm))/
+  length(unique(az$contbr_nm)) * 100)
+
+
+
+# Retired party leaning percentage
+percent(retired$party)
+# Retrired avg spending
+mean(retired$contb_receipt_amt)
+
+
+
+
+
+
+
+
+
+
+```
+
+As we can see above, retirees make up about %35.6 of the data-set. Around %60 of retirees contributed to democrats and around %40 percent to republicans, contributions to independents are negligible. Retirees contributed $81 on average.
+
+
+
+I want to know which occupations are most politically active, and how do they lean politically.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+jobs <-data.matrix(summary(az$contbr_occupation))
+
+head(jobs,10)
+```
+The most politically active occupations in the data set are attorneys, physicians then teachers.
+
+Below I would like to know the proportions of party leaning for each job. For example, of all engineers how many percent of them lean republican (number of republican engineers/ total number of engineers).
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+require(GGally)
+require(gmodels)
+
+
+# Create a DF for jobs and their party count
+job_party_table<- as.data.frame.matrix(table(az_std_jobs$contbr_occupation, az_std_jobs$party))
+
+# Create a DF with jobs and thier party percentages
+job_party_dist<- prop.table(table(az_std_jobs$contbr_occupation, az_std_jobs$party), 1)
+
+job_party_dist <- as.data.frame.table(job_party_dist)
+
+# Merge the two DFs above
+job_party_props<- data.frame(c(job_party_table, job_party_dist))
+
+#Keep these cols
+keep <- c('Var1','democrat', 'republican', 'Var2', 'Freq')
+job_party_props <- job_party_props[,keep]
+
+#change props to percentages
+job_party_props$Freq <- job_party_props$Freq *100
+# add a total_job col
+job_party_props$total <- job_party_props$democrat + job_party_props$republican
+
+#drop these cols
+job_party_props$democrat <- NULL
+job_party_props$republican <- NULL
+
+# change Var2 col to party
+names(job_party_props)[names(job_party_props) == 'Var2'] <- 'party'
+
+
+# subset top 10 republican jobs
+top10rep <-subset(job_party_props, party == 'republican' & total > 250) %>%
+  arrange(-Freq)
+
+top10rep
+#create a bar plot
+ggplot(top10rep[1:10,],
+       aes(Var1, Freq))+
+  geom_bar(stat = "identity")+
+       theme(axis.text.x=element_text(angle=90,hjust=1))
+
+
+
+# subset top 10 democrats jobs
+top10demo <-subset(job_party_props, party == 'democrat' & total > 250
+                   ) %>%
+  arrange(-Freq)
+
+top10demo
+
+# create a bar plot
+ggplot(top10demo[1:10,],
+       aes(Var1, Freq))+
+  geom_bar(stat = "identity")+
+     theme(axis.text.x=element_text(angle=90,hjust=1))
+
+
+
+
+```
+For the republican bar chart, most jobs are represented from the private sector, such as CEOs, executives, real estate and business owners.
+
+
+The democratic bar chart lacks variability as most of the jobs are 98% and above represent democrats. Most of the jobs are from the public sector such as social workers, educators, teachers and professors.
+
+
+
+
+
+I would like to see average spending along dates
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#group by avg week
+require(lubridate)
+# subset election year
+election_year <- az[az$proper_date > '2016-01-01',]
+
+  
+
+by_wk_sum <- tapply(election_year$contb_receipt_amt, week(election_year$proper_date), sum)
+
+by_wk_avg <- tapply(election_year$contb_receipt_amt, week(election_year$proper_date), mean)
+
+
+
+plot(by_wk_avg, type = 'l')+
+  title('Average Weekly Contribution for 2016')
+
+plot(by_wk_sum, type= 'l')+
+    title('Total Weekly Contribution for 2016')
+
+
+
+
+# note the weeks are aggregated by all years
+az$week <-format(az$proper_date, format = "%W")
+az$month <-format(az$proper_date, format = "%m")
+az$year <-format(az$proper_date, format = "%y")
+
+by_wk <- az %>% group_by(year = as.numeric(year), week= as.numeric(week), party) %>% summarise(sum = sum(contb_receipt_amt), 
+              average_contribution = mean(contb_receipt_amt),
+              number_of_contributions =n())
+
+
+
+ggplot(subset(by_wk, average_contribution> 0 & year > 14 & !is.na(by_wk$party)),
+       aes(as.numeric(week), average_contribution, color=party, size=number_of_contributions))+ geom_line()+
+  facet_grid(~year) +
+  ggtitle('Average Contributions per week as of 2015/2016')+
+  xlab('Week #')+
+  ylab('Average Contribution (USD)')
+
+
+```
+
+
+
+
+Now I would like to research the data geographically. I used the 'choroplethr' library, which was very useful to my analysis. 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(choroplethrZip)
+library(choroplethr)
+require(glue)
+data(df_zip_demographics)
+data("zip.regions")
+
+zip.regions
+# subset to az zips only 
+az_demographics <- subset(zip.regions, region > 85001 & region < 86556) 
+
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+# create a function that selects zipcode and region for zip_choropleth analysis
+
+clean <- function(x, y){
+  region <- x
+  value <- y
+  new <- data.frame(region, value)
+ new <- new[!duplicated(new$region), ]
+}
+
+
+#group by
+zip_avg_sum <- az %>%
+  group_by(clean_zip, party) %>%
+  summarise(
+            average_contrib = mean(contb_receipt_amt),
+            sum_of_contribs = sum(contb_receipt_amt))
+
+
+
+
+# Democratic contrib heatmap
+demo_zip_avg_sum <- na.omit(zip_avg_sum[zip_avg_sum$party == 'democrat',])
+
+demo_zip_avg_sum <- clean(demo_zip_avg_sum$clean_zip, 
+                          demo_zip_avg_sum$sum_of_contribs)
+
+demo_heat <- zip_choropleth(demo_zip_avg_sum,state_zoom = 'arizona',
+                            county_zoom = 4013 )+
+  ggtitle('Maricopa County Total USD Contribution (by Zipcode)', 
+          subtitle = 'Democratic Party Candidates')+
+  labs(color= 'USD Amount')
+
+# Republican contrib heatmap 
+repub_zip_avg_sum <- na.omit(zip_avg_sum[zip_avg_sum$party == 'republican',])
+repub_zip_avg_sum <- clean(repub_zip_avg_sum$clean_zip,
+                           repub_zip_avg_sum$sum_of_contribs)
+repub_zip_avg_sum
+repub_heat <- zip_choropleth(repub_zip_avg_sum,
+                             state_zoom = 'arizona', county_zoom = 4013)+
+  ggtitle(' ',subtitle =  'Republican Party Candidates') + 
+  scale_fill_brewer(palette="Reds")
+  
+
+repub_heat
+
+# problem: heatmap scales are not matching, 
+grid.arrange(demo_heat, repub_heat)
+ # Reasearch heatmap color and scale
+
+
+  
+  
+
+
+```
+Above is a heatmap representing the total spend of each zipcode within Maricopa county. As we can see most contributions are from the inner city of Phoenix, with some exceptions. Though I have to note that the scales of the plots are not perfect. 
+
+
+
+
+
+
+
+
+
+
+I relied on df_zip_demographics as an outer source for the below plots, and I have merged them to my df, which helped me explore new findings.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+# Final plot 3
+require(choroplethrMaps)
+
+df_zip_demographics <- subset(df_zip_demographics, region > 85001 & region < 86556) 
+
+ALLdemographics_df<- merge.data.frame(df_zip_demographics, zip.regions,
+                                      by.x='region', by.y='region')
+
+
+az_county<- merge.data.frame(az ,ALLdemographics_df,
+                             by.x='clean_zip', by.y = 'region')
+
+
+
+az_county_summ <- az_county %>%
+group_by(county.name, county.fips.numeric, party) %>%
+  summarise(n= n(),
+             average_contrib = mean(contb_receipt_amt),
+            sum_of_contribs = sum(contb_receipt_amt))
+
+
+
+# Clean  avg_contribution
+az_countyP1 <- with(az_county_summ, clean(county.fips.numeric, average_contrib))
+az_countyP1 <- na.omit(az_countyP1)
+
+# Plot avg_contribution by county
+county_choropleth(az_countyP1, state_zoom = 'arizona')+
+    scale_fill_brewer(palette="YlGn") +
+      ggtitle(label = 'Average Contribution (USD)', subtitle = 'By County')
+
+  
+
+
+# group by county & party
+az_county_party <- merge(x = az_county, y = az[, c("party","tran_id" )],
+                         by = "tran_id", all.x=TRUE)
+
+az_county_party_grouped <- az_county_party %>%
+  group_by(county.fips.numeric, party.x) %>%
+  summarize(average = mean(contb_receipt_amt))
+
+# Plot demo avg_contribution by county
+
+az_countyP1Demo <- 
+  with(az_county_party_grouped[az_county_party_grouped$party.x == 'democrat',],
+       clean(county.fips.numeric, average))
+
+
+P1Demo <-county_choropleth(na.omit(az_countyP1Demo), state_zoom = 'arizona')+
+    ggtitle(label = 'Democrat Average Contribution (USD)', subtitle = 'By County')
+
+
+
+
+
+
+
+# Plot repub avg_contribution by county
+
+az_countyP1Repub <-
+  with(az_county_party_grouped[az_county_party_grouped$party.x == 'republican',],
+       clean(county.fips.numeric, average))
+
+P1Repub <- county_choropleth(na.omit(az_countyP1Repub), state_zoom = 'arizona')+
+  ggtitle(label = 'Republican Average Contribution (USD)', subtitle = 'By County') +
+  scale_fill_brewer(palette="Reds")
+
+
+
+# Arrange the party plots 
+grid.arrange(P1Demo, P1Repub)
+
+```
+
+I am wondering what kind jobs contributed to Donald trump, my intuition says it's mostly blue collar jobs. Let's find out!
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#-Bar chart of most contributing jobs to the donald
+
+Trump_jobs <- az[az$cand_nm == "Trump, Donald J.",] %>%
+group_by(job=contbr_occupation) %>%
+  summarise(avg = mean(contb_receipt_amt),
+            n = n(),
+            total = sum(contb_receipt_amt)) %>%
+  arrange(-avg)
+Trump_jobs
+
+ggplot(Trump_jobs[Trump_jobs$n >100,], aes(x=job, y=avg))+
+geom_bar(stat = 'identity')+
+     theme(axis.text.x=element_text(angle=90,hjust=1))+
+  ggtitle('most contributing jobs to Trump (on average)')+
+  ylab('Average Contribution (USD)')+
+  xlab('Jobs')
+
+
+#-Bar chart of most contributing jobs to Clinton
+Clinton_jobs<- az[az$cand_nm == "Clinton, Hillary Rodham",] %>%
+group_by(job=contbr_occupation) %>%
+  summarise(avg = mean(contb_receipt_amt),
+            n = n())
+
+ggplot(Clinton_jobs[Clinton_jobs$n >390 & Clinton_jobs$avg > 0 ,],
+       aes(x=job, y=avg))+
+geom_bar(stat = 'identity')+
+  theme(axis.text.x=element_text(angle=90,hjust=1))+
+   ggtitle('most contributing jobs to Clinton (on average)')+
+  ylab('Average Contribution (USD)')+
+  xlab('Jobs')
+
+
+
+```
+My hypothesis is false, most of trumps contributors have white collar jobs, even the higher income types such as engineers, consultants, physicians and CEOs.
+
+let me see by number of contributions only if it helps me find out more,
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+ggplot(Trump_jobs[Trump_jobs$n >100 & Trump_jobs$n < 2000,], aes(x=job, y=n))+
+geom_bar(stat = 'identity')
+
+sum(Trump_jobs$n)/sum(cand_sum$n)
+
+
+
+ggplot(Trump_jobs[Trump_jobs$n >20 & Trump_jobs$n < 100,], aes(x=job, y=n))+
+geom_bar(stat = 'identity')+
+   theme(axis.text.x=element_text(angle=90,hjust=1))
+
+
+
+
+
+```
+The percentage of contributions for trump of the whole data-set is 18%.
+
+By changing some of the subset filters, still the majority were high income occupations, even though we have some blue collar jobs such as truck driver and construction, but they were the minority. My hypothesis is blue-collar workers cannot afford to contribute therefore, they are underrepresented in this data-set.
+
+
+I want to see if higher income zip-codes had more contributions and I will use a scatter-plot to demonstrate.
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+# final plots 2
+# merge demographic data with original dataset
+AZ_ALLdemographics_df <- merge.data.frame(az, ALLdemographics_df,
+                                          by.x = 'clean_zip', by.y = 'region')
+income_cotrib <- AZ_ALLdemographics_df %>%
+  group_by(clean_zip, income= per_capita_income)%>% 
+  summarise(n = n(), total= sum(contb_receipt_amt),
+            average = mean(contb_receipt_amt))
+
+
+
+ggplot(income_cotrib[income_cotrib$n >100,], aes(income, total))+
+  geom_point()+
+  geom_smooth()+
+  xlab('Median Income per Zipcode')+
+  ylab('Total Population per Zipcoe')+
+  ggtitle('Relationship Between Number of Median Income and Population per Zipcode')
+
+
+
+ggplot(income_cotrib[income_cotrib$n >100,], aes(income, average))+
+  geom_point()+
+  geom_smooth()+
+  xlab('Median Income per Zipcode')+
+  ylab('Average Contribution per Zipcode')+
+  ggtitle('Relationship Between Average USD Amount of Contributions and Median Income',
+          subtitle = 'Per Zipcode')
+
+
+
+
+```
+There is only a strong relationship When I subsetted the data to 100 contributions at least per zip-code. Doing otherwise will skew the data and the relationship will not be apparent. 
+
+
+
+
+
+This is obvious but still I would like to see the relationship between number of contributions and population of zip-code.
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#final plot 2
+
+
+
+pop_contrib <- AZ_ALLdemographics_df %>%
+  group_by(clean_zip, total_population)%>%
+  summarize(n=n())
+
+ggplot(pop_contrib, aes(n,total_population))+
+  geom_point()+
+  geom_smooth()+
+  xlim(0,1000)+
+  xlab('Number of Contributions')+
+  ylab('Total Population')+
+  ggtitle('Relationship Between Number of Contributions and Population of per Zipcode')
+
+
+
+
+
+```
+
+There is a strong correlation at first, but then as population increases the relationship weakens.
+
+
+
+### Final Plots:
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+
+
+
+finalp1 <- ggplot(subset(by_wk, average_contribution> 0 & year > 14 & !is.na(by_wk$party)),
+       aes(as.numeric(week), average_contribution, color=party, size=number_of_contributions))+ geom_line()+
+  facet_grid(~year) +
+  ggtitle('Average Contributions per week as of 2015/2016')+
+  xlab('Week #')+
+  ylab('Average Contribution (USD)')
+
+finalp1
+
+```
+It seems that the average amount of contributions were huge at the beginning of 2015, but when I added a 4th variable (n = number of contributions) it shows that these were a few outliers, the mass of the contributions came in mid 2016 as it lowered the average but the size (number of contributions) were bigger substantially. 
+
+
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+
+finalp2 <-  ggplot(pop_contrib, aes(n,total_population))+
+  geom_point()+
+  geom_smooth()+
+  xlim(0,1000)+
+  xlab('Number of Contributions')+
+  ylab('Total Population')+
+  ggtitle('Relationship Between Number of Contributions and Population of per Zipcode')
+
+finalp2
+```
+
+
+The above plot demonstrates the relationship between number of contributions vs population by zipcode. As expected as the population increased, the number of contribution increased. Although,  the curve was steepest from coordinates (0,0) until (250, 20000) then the curve stabilized throughout the rest of the plot. Which means that the relationship was strongest initially, but after the (250, 20000) coordinate threshold the relationship weakened between population and number of contributions. 
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+finalp3 <- ggplot(income_cotrib[income_cotrib$n >100,], aes(income, total))+
+  geom_point()+
+  geom_smooth()+
+  xlab('Median Income per Zipcode')+
+  ylab('Total Population per Zipcoe')+
+  ggtitle('Relationship Between Number of Median Income and Population per Zipcode')
+
+finalp3
+
+```
+
+The above plot was made by an outer source. Although it is not critical to my analysis, I found it interesting. The plot demonstrates the relationship between median income and total population per zipcode. We can safely infer that as the population density increases in a zipcode, the rent consequently increases, therefore people need to have a higher income to be able to afford living in higher population zipcodes.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+
+finalp4 <- ggplot(income_cotrib[income_cotrib$n >100,], aes(income, average))+
+  geom_point()+
+  geom_smooth()+
+  xlab('Median Income per Zipcode')+
+  ylab('Average Contribution per Zipcode')+
+  ggtitle('Relationship Between Average Amount of Contributions vs. Median Income (USD)',
+          subtitle = 'Per Zipcode')
+
+finalp4
+
+```
+
+The above graph shows the relationship between average amount contributed vs. median income (USD) per zipcode. There is a weak relationship from 0 on the x-axis until around 40,000 on the x-axis the relationship began to become stronger, and the curve became steeper. Though I have to note that the latter might be caused  due to the right-tail outliers.
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+
+
+
+# Plot avg_contribution by county
+finalp5 <- county_choropleth(az_countyP1, state_zoom = 'arizona')+
+    scale_fill_brewer(palette="YlGn") +
+      ggtitle(label = 'Average Contribution (USD)', subtitle = 'By County')
+
+  
+
+
+
+finalp5 
+
+```
+
+This plot shows the average contribution (USD) per county. The range of the highest and lowest average is $33 (68-35).
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+finalp6 <-  grid.arrange(P1Demo, P1Repub)
+
+finalp6
+
+
+
+finalp7 <- grid.arrange(demo_heat, repub_heat)
+
+
+finalp7
+
+
+```
+One of the first things that caught my eye is that the republican average contribution has a much higher disparity than the democrat plot, 94.8 vs. 32.3, respectively. 
+
+
+
+### Reflection:
+overall this project was a good challenge and learning experience. At first it was easy and enjoyable exploring the data, as I went deeper into the analysis it became harder to come up with relationships and conclusions about the data. I wanted my analysis to have a central  theme/thesis, the fact of not drawing a certain conclusion made me feel frustrated. 
+
+I was impressed with the versatility of R, and its packages, I felt like it was more intuitive than python, maybe because I have a background with Alteryx. Although, R felt like it had less support on stackoverflow than python, but there's support nonetheless, which aided me significantly throughout the project. I also used Datacamp for filling in the knowledge gaps and reinforcing the concepts learned in the Udacity curriculum. I have not utilized Udacity's live help as much as the other projects, because I did not face problems with programming itself, rather than loss of ideas and direction of my analysis. 
+
+This project was a great opportunity to reinforce the skills I learned through Udacity's business analyst nanodegree such as using Alteryx. 
+
+In terms of visualizations, R is fantastic for data exploration, although it is lacking the ability to export high resolution plots. I feel that Tableau is more suitable for findings/conclusive plots. 
+
+
+
+
+
