@@ -1287,7 +1287,11 @@ finalp7 <- grid.arrange(demo_heat, repub_heat)
 
 finalp7
 
+<<<<<<< HEAD
 getwd()
+=======
+
+>>>>>>> a2d48b44580ec8fc603a925011c69f8d781d7c12
 ```
 One of the first things that caught my eye is that the republican average contribution has a much higher disparity than the democrat plot, 94.8 vs. 32.3, respectively. 
 
