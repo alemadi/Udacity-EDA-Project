@@ -1184,15 +1184,19 @@ There is a strong correlation at first, but then as population increases the rel
 
 ### Final Plots:
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
-finalp1<- ggplot(subset(na.omit(by_wk), avg> 0 & year > 14),
-       aes(as.numeric(week), avg, color=party, size=n))+ geom_line()+
-  facet_grid(~year)+
-  ggtitle('Average USD Contributed Along 2015/16 Weeks by Party')+
+
+
+
+
+finalp1 <- ggplot(subset(by_wk, average_contribution> 0 & year > 14 & !is.na(by_wk$party)),
+       aes(as.numeric(week), average_contribution, color=party, size=number_of_contributions))+ geom_line()+
+  facet_grid(~year) +
+  ggtitle('Average Contributions per week as of 2015/2016')+
   xlab('Week #')+
-  ylab('USD Contributed (Average)')+
-  labs(color= 'Party', size = 'Number of Contributions')
-  
+  ylab('Average Contribution (USD)')
+
 finalp1
+
 ```
 It seems that the average amount of contributions were huge at the beginning of 2015, but when I added a 4th variable (n = number of contributions) it shows that these were a few outliers, the mass of the contributions came in mid 2016 as it lowered the average but the size (number of contributions) were bigger substantially. 
 
