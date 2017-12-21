@@ -1,0 +1,409 @@
+<?xml version="1.0"?>
+<AlteryxDocument yxmdVer="11.0">
+  <Nodes>
+    <Node ToolID="2">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.DbFileInput.DbFileInput">
+        <Position x="30" y="102" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <Passwords />
+          <File OutputFileName="" RecordLimit="" SearchSubDirs="False" FileFormat="25">C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\test\top 240 checkpoint 1.2.xlsx</File>
+          <FormatSpecificOptions>
+            <FirstRowData>False</FirstRowData>
+            <ImportLine>1</ImportLine>
+          </FormatSpecificOptions>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>top 240 checkpoint 1.2.xlsx</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+        <Dependencies>
+          <Implicit />
+        </Dependencies>
+        <MetaInfo connection="Output">
+          <RecordInfo>
+            <Field name="RecordID" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\test\top 240 checkpoint 1.2.xlsx" type="Double" />
+            <Field name="RecordID2" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\test\top 240 checkpoint 1.2.xlsx" type="Double" />
+            <Field name="MatchScore" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\test\top 240 checkpoint 1.2.xlsx" type="Double" />
+            <Field name="contbr_occupation" size="255" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\test\top 240 checkpoint 1.2.xlsx" type="V_String" />
+            <Field name="Source" size="255" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\test\top 240 checkpoint 1.2.xlsx" type="V_String" />
+          </RecordInfo>
+        </MetaInfo>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxDbFileInput" />
+    </Node>
+    <Node ToolID="4">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.DbFileInput.DbFileInput">
+        <Position x="150" y="186" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <Passwords />
+          <File OutputFileName="" RecordLimit="" SearchSubDirs="False" FileFormat="25">C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\test\STD Jobs.xlsx</File>
+          <FormatSpecificOptions>
+            <FirstRowData>False</FirstRowData>
+            <ImportLine>1</ImportLine>
+          </FormatSpecificOptions>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>STD Jobs.xlsx</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+        <Dependencies>
+          <Implicit />
+        </Dependencies>
+        <MetaInfo connection="Output">
+          <RecordInfo>
+            <Field name="RecordID" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\test\STD Jobs.xlsx" type="Double" />
+            <Field name="contbr_occupation" size="255" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\test\STD Jobs.xlsx" type="V_String" />
+            <Field name="Count" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\test\STD Jobs.xlsx" type="Double" />
+            <Field name="Source" size="255" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\test\STD Jobs.xlsx" type="V_String" />
+          </RecordInfo>
+        </MetaInfo>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxDbFileInput" />
+    </Node>
+    <Node ToolID="5">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.DbFileInput.DbFileInput">
+        <Position x="30" y="30" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <Passwords />
+          <File OutputFileName="" RecordLimit="" SearchSubDirs="False" FileFormat="25">C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\test\ALL NUM.xlsx</File>
+          <FormatSpecificOptions>
+            <FirstRowData>False</FirstRowData>
+            <ImportLine>1</ImportLine>
+          </FormatSpecificOptions>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>ALL NUM.xlsx</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+        <Dependencies>
+          <Implicit />
+        </Dependencies>
+        <MetaInfo connection="Output">
+          <RecordInfo>
+            <Field name="RecordID" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\test\ALL NUM.xlsx" type="Double" />
+            <Field name="Field_1" size="255" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\test\ALL NUM.xlsx" type="V_String" />
+            <Field name="first_name" size="255" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\test\ALL NUM.xlsx" type="V_String" />
+            <Field name="contrib_gender" size="255" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\test\ALL NUM.xlsx" type="V_String" />
+            <Field name="cmte_id" size="255" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\test\ALL NUM.xlsx" type="V_String" />
+            <Field name="cand_id" size="255" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\test\ALL NUM.xlsx" type="V_String" />
+            <Field name="cand_nm" size="255" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\test\ALL NUM.xlsx" type="V_String" />
+            <Field name="contbr_nm" size="255" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\test\ALL NUM.xlsx" type="V_String" />
+            <Field name="contbr_city" size="255" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\test\ALL NUM.xlsx" type="V_String" />
+            <Field name="contbr_st" size="255" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\test\ALL NUM.xlsx" type="V_String" />
+            <Field name="contbr_zip" size="255" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\test\ALL NUM.xlsx" type="V_String" />
+            <Field name="contbr_employer" size="255" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\test\ALL NUM.xlsx" type="V_String" />
+            <Field name="contbr_occupation" size="255" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\test\ALL NUM.xlsx" type="V_String" />
+            <Field name="contb_receipt_amt" size="255" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\test\ALL NUM.xlsx" type="V_String" />
+            <Field name="contb_receipt_dt" size="255" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\test\ALL NUM.xlsx" type="V_String" />
+            <Field name="receipt_desc" size="255" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\test\ALL NUM.xlsx" type="V_String" />
+            <Field name="memo_cd" size="255" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\test\ALL NUM.xlsx" type="V_String" />
+            <Field name="memo_text" size="255" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\test\ALL NUM.xlsx" type="V_String" />
+            <Field name="form_tp" size="255" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\test\ALL NUM.xlsx" type="V_String" />
+            <Field name="file_num" size="255" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\test\ALL NUM.xlsx" type="V_String" />
+            <Field name="tran_id" size="255" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\test\ALL NUM.xlsx" type="V_String" />
+            <Field name="election_tp" size="255" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\test\ALL NUM.xlsx" type="V_String" />
+            <Field name="proper_date" size="255" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\test\ALL NUM.xlsx" type="V_String" />
+            <Field name="party" size="255" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\test\ALL NUM.xlsx" type="V_String" />
+            <Field name="cand_gender" size="255" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\test\ALL NUM.xlsx" type="V_String" />
+            <Field name="Source" size="255" source="File: C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\test\ALL NUM.xlsx" type="V_String" />
+          </RecordInfo>
+        </MetaInfo>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxDbFileInput" />
+    </Node>
+    <Node ToolID="6">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.Join.Join">
+        <Position x="162" y="90" />
+      </GuiSettings>
+      <Properties>
+        <Configuration joinByRecordPos="False">
+          <JoinInfo connection="Left">
+            <Field field="RecordID" />
+          </JoinInfo>
+          <JoinInfo connection="Right">
+            <Field field="RecordID2" />
+          </JoinInfo>
+          <SelectConfiguration>
+            <Configuration outputConnection="Join">
+              <OrderChanged value="False" />
+              <SelectFields>
+                <SelectField field="Right_RecordID" selected="True" rename="Right_RecordID" />
+                <SelectField field="Right_contbr_occupation" selected="True" rename="Right_contbr_occupation" />
+                <SelectField field="Right_Source" selected="True" rename="Right_Source" />
+                <SelectField field="*Unknown" selected="True" />
+              </SelectFields>
+            </Configuration>
+          </SelectConfiguration>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText />
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxJoin" />
+    </Node>
+    <Node ToolID="7">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.Join.Join">
+        <Position x="294" y="102" />
+      </GuiSettings>
+      <Properties>
+        <Configuration joinByRecordPos="False">
+          <JoinInfo connection="Left">
+            <Field field="Right_RecordID" />
+          </JoinInfo>
+          <JoinInfo connection="Right">
+            <Field field="RecordID" />
+          </JoinInfo>
+          <SelectConfiguration>
+            <Configuration outputConnection="Join">
+              <OrderChanged value="False" />
+              <SelectFields>
+                <SelectField field="Left_Right_RecordID" selected="True" rename="Left_Right_RecordID" />
+                <SelectField field="Left_Right_contbr_occupation" selected="True" rename="Left_Right_contbr_occupation" />
+                <SelectField field="Left_Right_Source" selected="True" rename="Left_Right_Source" />
+                <SelectField field="Right_RecordID" selected="True" rename="Right_RecordID" />
+                <SelectField field="Right_contbr_occupation" selected="True" rename="Right_contbr_occupation" />
+                <SelectField field="Right_Source" selected="True" rename="Right_Source" />
+                <SelectField field="*Unknown" selected="True" />
+              </SelectFields>
+            </Configuration>
+          </SelectConfiguration>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText />
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxJoin" />
+    </Node>
+    <Node ToolID="8">
+      <GuiSettings Plugin="AlteryxSpatialPluginsGui.Summarize.Summarize">
+        <Position x="402" y="102" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <SummarizeFields>
+            <SummarizeField field="Right_contbr_occupation" action="GroupBy" rename="Right_contbr_occupation" />
+            <SummarizeField field="Right_contbr_occupation" action="Count" rename="Count" />
+          </SummarizeFields>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText />
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxSpatialPluginsEngine.dll" EngineDllEntryPoint="AlteryxSummarize" />
+    </Node>
+    <Node ToolID="9">
+      <GuiSettings Plugin="AlteryxSpatialPluginsGui.Summarize.Summarize">
+        <Position x="138" y="6" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <SummarizeFields>
+            <SummarizeField field="contbr_occupation" action="GroupBy" rename="contbr_occupation" />
+            <SummarizeField field="contbr_occupation" action="Count" rename="Count" />
+          </SummarizeFields>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText />
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxSpatialPluginsEngine.dll" EngineDllEntryPoint="AlteryxSummarize" />
+    </Node>
+    <Node ToolID="10">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.Join.Join">
+        <Position x="582" y="54" />
+      </GuiSettings>
+      <Properties>
+        <Configuration joinByRecordPos="False">
+          <JoinInfo connection="Left">
+            <Field field="Right_contbr_occupation" />
+          </JoinInfo>
+          <JoinInfo connection="Right">
+            <Field field="contbr_occupation" />
+          </JoinInfo>
+          <SelectConfiguration>
+            <Configuration outputConnection="Join">
+              <OrderChanged value="False" />
+              <SelectFields>
+                <SelectField field="Left_Right_contbr_occupation" selected="True" rename="Left_Right_contbr_occupation" />
+                <SelectField field="Right_Count" selected="True" rename="Right_Count" />
+                <SelectField field="*Unknown" selected="True" />
+              </SelectFields>
+            </Configuration>
+          </SelectConfiguration>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText />
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxJoin" />
+    </Node>
+    <Node ToolID="11">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.Formula.Formula">
+        <Position x="678" y="54" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <FormulaFields>
+            <FormulaField expression="[Count] - [Right_Count]" field="diff" size="1073741823" type="V_WString" />
+          </FormulaFields>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText><![CDATA[diff = [Count] - [Right_Count]
+]]></DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxFormula" />
+    </Node>
+    <Node ToolID="12">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.DbFileOutput.DbFileOutput">
+        <Position x="510" y="198" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <File MaxRecords="" FileFormat="0">C:\Users\alema\Documents\DAND\Project 4\Udacity-EDA-Project\STD Jobs 2.0 .csv</File>
+          <Passwords />
+          <FormatSpecificOptions>
+            <LineEndStyle>CRLF</LineEndStyle>
+            <Delimeter>,</Delimeter>
+            <ForceQuotes>False</ForceQuotes>
+            <HeaderRow>True</HeaderRow>
+            <CodePage>28591</CodePage>
+            <WriteBOM>True</WriteBOM>
+          </FormatSpecificOptions>
+          <MultiFile value="False" />
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>STD Jobs 2.0 .csv</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+        <Dependencies>
+          <Implicit />
+        </Dependencies>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxDbFileOutput" />
+    </Node>
+    <Node ToolID="13">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.Filter.Filter">
+        <Position x="366" y="258" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <Expression>[Right_contbr_occupation] != [contbr_occupation]</Expression>
+          <Mode>Custom</Mode>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>[Right_contbr_occupation] != [contbr_occupation]</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxFilter" />
+    </Node>
+  </Nodes>
+  <Connections>
+    <Connection>
+      <Origin ToolID="2" Connection="Output" />
+      <Destination ToolID="6" Connection="Right" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="5" Connection="Output" />
+      <Destination ToolID="6" Connection="Left" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="4" Connection="Output" />
+      <Destination ToolID="7" Connection="Right" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="6" Connection="Join" />
+      <Destination ToolID="7" Connection="Left" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="5" Connection="Output" />
+      <Destination ToolID="9" Connection="Input" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="7" Connection="Join" />
+      <Destination ToolID="8" Connection="Input" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="7" Connection="Join" />
+      <Destination ToolID="12" Connection="Input" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="7" Connection="Join" />
+      <Destination ToolID="13" Connection="Input" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="8" Connection="Output" />
+      <Destination ToolID="10" Connection="Left" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="9" Connection="Output" />
+      <Destination ToolID="10" Connection="Right" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="10" Connection="Join" />
+      <Destination ToolID="11" Connection="Input" />
+    </Connection>
+  </Connections>
+  <Properties>
+    <Memory default="True" />
+    <GlobalRecordLimit value="0" />
+    <TempFiles default="True" />
+    <Annotation on="True" includeToolName="False" />
+    <ConvErrorLimit value="10" />
+    <ConvErrorLimit_Stop value="False" />
+    <CancelOnError value="False" />
+    <DisableBrowse value="False" />
+    <EnablePerformanceProfiling value="False" />
+    <DisableAllOutput value="False" />
+    <ShowAllMacroMessages value="False" />
+    <ShowConnectionStatusIsOn value="True" />
+    <ShowConnectionStatusOnlyWhenRunning value="True" />
+    <ZoomLevel value="0" />
+    <LayoutType>Horizontal</LayoutType>
+    <MetaInfo>
+      <NameIsFileName value="True" />
+      <Name>Standardizing top 240 Job Titles step 2</Name>
+      <Description />
+      <RootToolName />
+      <ToolVersion />
+      <ToolInDb value="False" />
+      <CategoryName />
+      <SearchTags />
+      <Author />
+      <Company />
+      <Copyright />
+      <DescriptionLink actual="" displayed="" />
+      <Example>
+        <Description />
+        <File />
+      </Example>
+    </MetaInfo>
+    <Events>
+      <Enabled value="True" />
+    </Events>
+  </Properties>
+</AlteryxDocument>
