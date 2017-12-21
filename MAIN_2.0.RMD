@@ -6,6 +6,16 @@ output:
   pdf_document: default
 ---
 
+---
+title: "Analysis Title"
+author: Abdulrahman Alemadi
+date: [December] [21st], [2017]
+output: 
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+---
 ### Introduction
 
 This is the 4th project of Udacity's Data Analyst NanoDegree Program. We were given several data sources as options to analyze from. I chose the Arizona's 2016 Presidential Campaign Finance from the Federal Election Commission (FEC) website.
